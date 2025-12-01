@@ -1,0 +1,512 @@
+#all the instances
+instance box models/box.obj
+instance cylinder models/cylinder.obj
+instance cone models/cone.obj
+instance plane models/aeroplane-scaled.obj
+
+#materials
+material mat-box
+ambient 0.2 0.05 0.05
+diffuse 0.8 0.1 0.1
+specular 0.3 0.3 0.3
+shininess 20
+end-material
+
+material mat-box-2
+ambient 0.15 0.12 0.03
+diffuse 0.9 0.7 0.2
+specular 1.0 0.9 0.5
+shininess 80
+end-material
+
+material mat-box-3
+ambient 0.02 0.02 0.1
+diffuse 0.2 0.2 0.9
+specular 0.9 0.9 0.9
+shininess 60
+end-material
+
+material mat-cylinder
+ambient 0.05 0.3 0.05
+diffuse 0.1 0.8 0.2
+specular 0.4 0.4 0.4
+shininess 30
+end-material
+
+material mat-cylinder2
+ambient 0.03 0.3 0.25
+diffuse 0.1 0.7 0.6
+specular 0.8 0.8 0.8
+shininess 50
+end-material
+
+material mat-cylinder3
+ambient 0.3 0.15 0.0
+diffuse 0.9 0.4 0.1
+specular 0.3 0.3 0.3
+shininess 25
+end-material
+
+material mat-miniret
+ambient 0.1 0.0 0.1
+diffuse 0.7 0.2 0.8
+specular 0.9 0.8 0.9
+shininess 70
+end-material
+
+material mat-cone
+ambient 0.05 0.05 0.2
+diffuse 0.2 0.2 1.0
+specular 0.6 0.6 0.8
+shininess 40
+end-material
+
+material mat-plane
+ambient 0.3 0.3 0.3
+diffuse 0.7 0.7 0.7
+specular 0.3 0.3 0.3
+shininess 100
+end-material
+
+light light-one
+ambient 1 0.5 0.5    
+diffuse 1 0.5 0.4          
+specular 1 0.5 0.4    
+position 50 40 -40 
+end-light
+
+light light-two
+ambient 0.5 0 1   
+diffuse 0.4 0.5 1.0   
+specular 0.4 0.5 1.0   
+position -50 40 40   
+end-light
+
+light plane-spot1
+ambient 1 0.5 0      
+diffuse 1 0.3 0      
+specular 1 0.5 0.3   
+position 3 0 0  
+spot-direction 0 1 0
+spot-angle 10
+end-light
+
+light plane-spot2
+ambient 0 0.5 1     
+diffuse 0 0.3 1     
+specular 0.3 0.5 1  
+position -3 0 0   
+spot-direction 0 1 0
+spot-angle 10
+end-light
+
+image white textures/white.ppm
+image checkerboard textures/checkerboard.ppm
+
+group hogwarts hogwarts
+assign-light light-one hogwarts
+assign-light light-two hogwarts
+
+# Object 1
+group obj1 obj1
+
+translate trans-box-obj1 translate-box 5 25 -5       
+scale scale-box-obj1 scale-box 10 50 10
+leaf box-obj1 box-node instanceof box       
+assign-material box-obj1 mat-box
+assign-texture box-obj1 checkerboard
+add-child box-obj1 scale-box-obj1
+add-child scale-box-obj1 trans-box-obj1
+add-child trans-box-obj1 obj1
+
+translate trans-cylinder-obj1 translate-cyl 5 50 -5        
+scale scale-cylinder-obj1 scale-cyl 5 5 5
+leaf cylinder-obj1 cylinder-node instanceof cylinder  
+assign-material cylinder-obj1 mat-cylinder
+assign-texture cylinder-obj1 checkerboard
+
+add-child cylinder-obj1 scale-cylinder-obj1
+add-child scale-cylinder-obj1 trans-cylinder-obj1
+add-child trans-cylinder-obj1 obj1
+
+translate trans-cone-obj1 translate-cone 5 55 -5
+scale scale-cone-obj1 scale-cone 5 10 5
+leaf cone-obj1 cone-node instanceof cone
+assign-material cone-obj1 mat-cone
+assign-texture cone-obj1 checkerboard
+
+add-child cone-obj1 scale-cone-obj1
+add-child scale-cone-obj1 trans-cone-obj1
+add-child trans-cone-obj1 obj1
+add-child obj1 hogwarts
+
+# Object 2
+translate trans-obj2 translate-obj2 15 0 0 
+add-child trans-obj2 hogwarts
+
+copy obj2 obj1
+add-child obj2 trans-obj2
+
+# Object 3
+group obj3 obj3
+
+translate trans-obj3 translate-box 12.5 10 -27.5
+scale scale-obj3 scale-box 15 20 -35
+leaf box-obj3 box-node instanceof box
+assign-material box-obj3 mat-box-3
+
+add-child box-obj3 scale-obj3
+add-child scale-obj3 trans-obj3
+add-child trans-obj3 obj3
+add-child obj3 hogwarts
+
+# Object 4
+group obj4 obj4
+
+translate trans-obj4 translate-box 30 10 -27.5
+scale scale-obj4 scale-box 20 20 -35
+leaf box-obj4 box-node instanceof box
+assign-material box-obj4 mat-box-2
+
+add-child box-obj4 scale-obj4
+add-child scale-obj4 trans-obj4
+add-child trans-obj4 obj4
+add-child obj4 hogwarts
+
+# Object 5
+group obj5 obj5
+
+translate trans-obj5 translate-box 12.5 10 -57.5
+scale scale-obj5 scale-box 25 20 25
+leaf box-obj5 box-node instanceof box
+assign-material box-obj5 mat-box
+assign-texture box-obj5 checkerboard
+
+add-child box-obj5 scale-obj5
+add-child scale-obj5 trans-obj5
+add-child trans-obj5 obj5
+
+translate trans-cylinder-obj5 translate-cyl 12.5 20 -57.5        
+scale scale-cylinder-obj5 scale-cyl 11 25 11
+leaf cylinder-obj5 cylinder-node instanceof cylinder  
+assign-material cylinder-obj5 mat-cylinder2
+assign-texture cylinder-obj5 checkerboard
+
+
+add-child cylinder-obj5 scale-cylinder-obj5
+add-child scale-cylinder-obj5 trans-cylinder-obj5
+add-child trans-cylinder-obj5 obj5
+
+translate trans-cylinder2-obj5 translate-cyl2 12.5 45 -57.5        
+scale scale-cylinder2-obj5 scale-cyl2 10 25 10
+leaf cylinder2-obj5 cylinder-node instanceof cylinder  
+assign-material cylinder2-obj5 mat-cylinder3
+assign-texture cylinder2-obj5 checkerboard
+
+add-child cylinder2-obj5 scale-cylinder2-obj5
+add-child scale-cylinder2-obj5 trans-cylinder2-obj5
+add-child trans-cylinder2-obj5 obj5
+
+translate trans-cone-obj5 translate-cone 12.5 70 -57.5
+scale scale-cone-obj5 scale-cone 10 20 10
+leaf cone-obj5 cone-node instanceof cone
+assign-material cone-obj5 mat-cone
+assign-texture cone-obj5 checkerboard
+
+add-child cone-obj5 scale-cone-obj5
+add-child scale-cone-obj5 trans-cone-obj5
+add-child trans-cone-obj5 obj5
+
+# Object 5 Minirets
+group miniret miniret
+
+translate trans-miniret-1 translate-miniret-cyl 12.5 30 -47.5        
+scale scale-miniret-1 scale-miniret-cyl 4 25 4
+leaf miniret-cyl cylinder-node instanceof cylinder  
+assign-material miniret-cyl mat-miniret
+
+add-child miniret-cyl scale-miniret-1
+add-child scale-miniret-1 trans-miniret-1
+add-child trans-miniret-1 miniret
+
+translate trans-cone-miniret translate-miniret-cone 12.5 55 -47.5
+scale scale-cone-miniret scale-miniret-cone 4 10 4
+leaf miniret-cone cone-node instanceof cone
+assign-material miniret-cone mat-cone
+
+add-child miniret-cone scale-cone-miniret
+add-child scale-cone-miniret trans-cone-miniret
+add-child trans-cone-miniret miniret
+add-child miniret obj5
+
+translate trans-miniret2 translate-miniret2 10 0 -10
+add-child trans-miniret2 obj5
+copy miniret2 miniret
+add-child miniret2 trans-miniret2
+
+translate trans-miniret3 translate-miniret3 -10 0 -10
+add-child trans-miniret3 obj5
+copy miniret3 miniret
+add-child miniret3 trans-miniret3
+
+translate trans-miniret4 translate-miniret4 0 0 -20
+add-child trans-miniret4 obj5
+copy miniret4 miniret
+add-child miniret4 trans-miniret4
+add-child obj5 hogwarts
+
+# Object 6
+group obj6 obj6
+
+translate trans-obj6 translate-box 50 10 -50
+scale scale-obj6 scale-box 50 20 -10
+leaf box-obj6 box-node instanceof box
+assign-material box-obj6 mat-box-2
+
+add-child box-obj6 scale-obj6
+add-child scale-obj6 trans-obj6
+add-child trans-obj6 obj6
+add-child obj6 hogwarts
+
+# Object 7
+group obj7 obj7
+
+translate trans-obj7 translate-box 47.5 10 -35
+scale scale-obj7 scale-box 15 20 -20
+leaf box-obj7 box-node instanceof box
+assign-material box-obj7 mat-box-3
+
+add-child box-obj7 scale-obj7
+add-child scale-obj7 trans-obj7
+add-child trans-obj7 obj7
+add-child obj7 hogwarts
+
+# Object 8 
+group obj8 obj8
+
+translate trans-box-obj8 translate-box 47.5 25 -17.5      
+scale scale-box-obj8 scale-box 15 50 15
+leaf box-obj8 box-node instanceof box       
+assign-material box-obj8 mat-box
+add-child box-obj8 scale-box-obj8
+add-child scale-box-obj8 trans-box-obj8
+add-child trans-box-obj8 obj8
+
+translate trans-cylinder-obj8 translate-cyl 47.5 50 -17.5      
+scale scale-cylinder-obj8 scale-cyl 7.5 10 7.5
+leaf cylinder-obj8 cylinder-node instanceof cylinder  
+assign-material cylinder-obj8 mat-cylinder
+
+add-child cylinder-obj8 scale-cylinder-obj8
+add-child scale-cylinder-obj8 trans-cylinder-obj8
+add-child trans-cylinder-obj8 obj8
+
+translate trans-cone-obj8 translate-cone 47.5 60 -17.5
+scale scale-cone-obj8 scale-cone 7.5 10 7.5
+leaf cone-obj8 cone-node instanceof cone
+assign-material cone-obj8 mat-cone
+
+add-child cone-obj8 scale-cone-obj8
+add-child scale-cone-obj8 trans-cone-obj8
+add-child trans-cone-obj8 obj8
+add-child obj8 hogwarts
+
+# Object 9
+group obj9 obj9
+
+translate trans-obj9 translate-box 32.5 10 -5
+scale scale-obj9 scale-box 15 20 10
+leaf box-obj9 box-node instanceof box
+assign-material box-obj9 mat-box-2
+
+add-child box-obj9 scale-obj9
+add-child scale-obj9 trans-obj9
+add-child trans-obj9 obj9
+add-child obj9 hogwarts
+
+# Object 10
+group obj10 obj10
+
+translate trans-obj10 translate-box 60 10 -27.5
+scale scale-obj10 scale-box 10 20 35
+leaf box-obj10 box-node instanceof box
+assign-material box-obj10 mat-box-2
+
+add-child box-obj10 scale-obj10
+add-child scale-obj10 trans-obj10
+add-child trans-obj10 obj10
+add-child obj10 hogwarts
+
+# Object 11
+group obj11 obj11
+
+translate trans-obj11 translate-box 70 10 -27.5
+scale scale-obj11 scale-box 10 20 15
+leaf box-obj11 box-node instanceof box
+assign-material box-obj11 mat-box-3
+
+add-child box-obj11 scale-obj11
+add-child scale-obj11 trans-obj11
+add-child trans-obj11 obj11
+add-child obj11 hogwarts
+
+# Object 12
+translate trans-obj12 translate-obj12 65 0 -10
+add-child trans-obj12 hogwarts
+
+copy obj12 obj1
+add-child obj12 trans-obj12
+
+# Object 13
+translate trans-obj13 translate-obj3 65 0 -35
+add-child trans-obj13 hogwarts
+
+copy obj13 obj1
+add-child obj13 trans-obj13
+
+# Object 14
+group obj14 obj14
+
+translate trans-obj14 translate-box 80 10 -27.5
+scale scale-obj14 scale-box 10 20 35
+leaf box-obj14 box-node instanceof box
+assign-material box-obj14 mat-box-3
+
+add-child box-obj14 scale-obj14
+add-child scale-obj14 trans-obj14
+add-child trans-obj14 obj14
+add-child obj14 hogwarts
+
+# Object 15
+translate trans-obj15 translate-obj15 75 0 -45
+add-child trans-obj15 hogwarts
+
+copy obj15 obj1
+add-child obj15 trans-obj15
+
+# Object 16
+translate trans-obj16 translate-obj16 75 0 0
+add-child trans-obj16 hogwarts
+
+copy obj16 obj1
+add-child obj16 trans-obj16
+
+# Object 17
+group obj17 obj17
+
+translate trans-obj17 translate-box 103 10 -27
+scale scale-obj17 scale-box 36 20 10 
+leaf box-obj17 box-node instanceof box
+assign-material box-obj17 mat-box-2
+
+add-child box-obj17 scale-obj17
+add-child scale-obj17 trans-obj17
+add-child trans-obj17 obj17
+add-child obj17 hogwarts
+
+# Object 18
+group obj18 obj18
+
+translate trans-obj18 translate-box 95 10 -45
+scale scale-obj18 scale-box 20 20 10 
+leaf box-obj18 box-node instanceof box
+assign-material box-obj18 mat-box-3
+
+add-child box-obj18 scale-obj18
+add-child scale-obj18 trans-obj18
+add-child trans-obj18 obj18
+add-child obj18 hogwarts
+
+# Object 19
+group obj19 obj19
+
+translate trans-cylinder-obj19 translate-cyl 113 0 -45      
+scale scale-cylinder-obj19 scale-cyl 12.5 40 12.5
+leaf cylinder-obj19 cylinder-node instanceof cylinder  
+assign-material cylinder-obj19 mat-cylinder2
+
+add-child cylinder-obj19 scale-cylinder-obj19
+add-child scale-cylinder-obj19 trans-cylinder-obj19
+add-child trans-cylinder-obj19 obj19
+
+translate trans-cone-obj19 translate-cone 113 40 -45
+scale scale-cone-obj19 scale-cone 12.5 50 12.5
+leaf cone-obj19 cone-node instanceof cone
+assign-material cone-obj19 mat-cone
+
+add-child cone-obj19 scale-cone-obj19
+add-child scale-cone-obj19 trans-cone-obj19
+add-child trans-cone-obj19 obj19
+add-child obj19 hogwarts
+
+# Object 20
+group obj20 obj20
+
+translate trans-obj20 translate-box 131 10 -45
+scale scale-obj20 scale-box 20 20 10 
+leaf box-obj20 box-node instanceof box
+assign-material box-obj20 mat-box-2
+
+add-child box-obj20 scale-obj20
+add-child scale-obj20 trans-obj20
+add-child trans-obj20 obj20
+add-child obj20 hogwarts
+
+# Object 21
+translate trans-obj21 translate-obj21 131 0 -32
+add-child trans-obj21 hogwarts
+
+copy obj21 obj1
+add-child obj21 trans-obj21
+
+# Object 22
+translate trans-obj22 translate-obj22 121 0 -22
+add-child trans-obj22 hogwarts
+
+copy obj22 obj1
+add-child obj22 trans-obj22
+
+# Object 23
+group obj23 obj23
+
+translate trans-obj23 translate-box 136 10 -29.5
+scale scale-obj23 scale-box 10 20 15 
+leaf box-obj23 box-node instanceof box
+assign-material box-obj23 mat-box-2
+
+add-child box-obj23 scale-obj23
+add-child scale-obj23 trans-obj23
+add-child trans-obj23 obj23
+add-child obj23 hogwarts
+
+# Object 24
+group obj24 obj24
+
+translate trans-obj24 translate-box 12.5 10 -5
+scale scale-obj24 scale-box 5 20 10
+leaf box-obj24 box-node instanceof box
+assign-material box-obj24 mat-box-2
+
+add-child box-obj24 scale-obj24
+add-child scale-obj24 trans-obj24
+add-child trans-obj24 obj24
+add-child obj24 hogwarts
+
+# Flying Object
+group plane plane
+
+scale scale-plane scale-plane 2.5 2.5 2.5
+keyframe animate-fly animate-plane text/aeroplane-path.txt
+leaf aeroplane plane-node instanceof plane
+assign-material aeroplane mat-plane
+assign-light plane-spot1 aeroplane
+assign-light plane-spot2 aeroplane
+
+add-child aeroplane scale-plane
+add-child scale-plane animate-fly
+add-child animate-fly plane
+add-child plane hogwarts
+
+assign-root hogwarts
+
+
