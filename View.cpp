@@ -156,7 +156,7 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    window = glfwCreateWindow(50, 50, "Hogwarts", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Hogwarts", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -205,7 +205,7 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
 	projection = glm::perspective(glm::radians(60.0f),(float)window_width/window_height,0.1f,10000.0f);
     glViewport(0, 0, window_width,window_height);
     renderer = new sgraph::GLScenegraphRenderer(modelview,objects,shaderLocations);    
-    raytracer = new ray::Raytracer(50, 50, modelview, meshes, scenegraph);
+    raytracer = new ray::Raytracer(200, 200, modelview, meshes, scenegraph);
 }
 
 //Camera Mode 4 is handled here. Using the inverse of the renderer's animation to follow the plane.

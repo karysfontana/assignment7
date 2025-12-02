@@ -32,9 +32,12 @@ public:
     RaycastRenderer(stack<glm::mat4>& mv,
                    map<string, util::PolygonMesh<VertexAttrib>>& meshes)
         : modelview(mv), tick(0), animationTransform(glm::mat4(1.0f)) {
+        std::cout << "Creating RaycastRenderer with " << meshes.size() << " meshes" << std::endl;
         for (auto& pair : meshes) {
+            std::cout << "  Adding mesh: '" << pair.first << "'" << std::endl;
             raytraceMeshes[pair.first] = new ray::RaytraceMesh(pair.first, pair.second);
         }
+        std::cout << "raytraceMeshes now has " << raytraceMeshes.size() << " entries" << std::endl;
     }
     
     ~RaycastRenderer() {
@@ -65,7 +68,7 @@ public:
     }
     
     void visitLeafNode(LeafNode *node) {
-        string meshName = node->getName();
+        string meshName = node->getInstanceOf();
         if (raytraceMeshes.find(meshName) == raytraceMeshes.end()) {
             return;
         }

@@ -1,5 +1,5 @@
 #instances
-instance box models/sphere.obj
+instance sphere models/sphere.obj
 
 #materials
 material box-material
@@ -26,11 +26,11 @@ assign-light main-light root
 
 #single box at origin
 scale b-scale b-scale 5 5 5
-leaf test-box test-box instanceof box 
-assign-material test-box box-material
-assign-texture test-box white
+leaf sphere sphere instanceof sphere
+assign-material sphere box-material
+assign-texture sphere white
 
-add-child test-box b-scale
+add-child sphere b-scale
 add-child b-scale root
 
 assign-root root

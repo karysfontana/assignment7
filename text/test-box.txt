@@ -26,11 +26,11 @@ assign-light main-light root
 
 #single box at origin
 scale b-scale b-scale 5 5 5
-leaf test-box test-box instanceof box 
-assign-material test-box box-material
-assign-texture test-box white
+leaf box box instanceof box 
+assign-material box box-material
+assign-texture box white
 
-add-child test-box b-scale
+add-child box b-scale
 add-child b-scale root
 
 assign-root root

@@ -9,6 +9,7 @@
 #include "../sgraph/RaycastRenderer.h"
 #include "../sgraph/IScenegraph.h"
 #include <stack>
+#include <iostream>
 
 namespace ray {
 class Raytracer {
