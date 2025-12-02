@@ -90,7 +90,7 @@ class Raytracer {
     }
     
     void saveImage(const std::string& filename) {
-        FILE* fp = fopen(filename.c_str(), "w");  // Note: "w" not "wb"
+        FILE* fp = fopen(filename.c_str(), "w"); 
         if (!fp) {
             return;
         }

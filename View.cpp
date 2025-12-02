@@ -156,7 +156,7 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    window = glfwCreateWindow(800, 800, "Hogwarts", NULL, NULL);
+    window = glfwCreateWindow(50, 50, "Hogwarts", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
