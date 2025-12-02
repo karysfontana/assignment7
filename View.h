@@ -12,6 +12,7 @@
 #include "ObjectInstance.h"
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
+#include "ray/Raytracer.h"
 #include "sgraph/IScenegraph.h"
 
 #include <stack>
@@ -40,6 +41,7 @@ private:
     util::ShaderLocationsVault shaderLocations;
     util::ShaderLocationsVault toonShaders;
     map<string,util::ObjectInstance *> objects;
+    ray::Raytracer *raytracer;
     glm::mat4 projection;
     stack<glm::mat4> modelview;
     sgraph::SGNodeVisitor *renderer;

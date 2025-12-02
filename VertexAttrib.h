@@ -144,6 +144,21 @@ public:
         return attributes;
     }
 
+    glm::vec3 getPosition() const
+    {
+        return glm::vec3(position);
+    }
+
+    glm::vec3 getNormal() const
+    {
+        return glm::vec3(normal);
+    }
+
+    glm::vec2 getTexcoord() const
+    {
+        return glm::vec2(texcoord);
+    }
+
 private:
     glm::vec4 position;
     glm::vec4 normal;

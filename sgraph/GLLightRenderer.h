@@ -75,6 +75,10 @@ public:
         glUniform1i(shaderLocations.getLocation("numLights"), count);
     }
 
+    void getAllLights(std::vector<util::Light>& lights) {
+        lights = allLights;
+    }
+
     void setShaderLocations(const util::ShaderLocationsVault &s) override {
         shaderLocations = s;
     }

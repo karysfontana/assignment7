@@ -6,15 +6,17 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <string>
-#include "RaycastingHelpers.h"
+#include "HitRecord.h"
+#include "Ray.h"
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
-#include "HitRecord.h"
 #include "Material.h"
+
+namespace ray {
 
 class RaytraceMesh {
 private:
-    PolygonMesh<VertexAttrib> mesh;
+    util::PolygonMesh<VertexAttrib> mesh;
     std::string name;
     
     bool intersectTriangle(const Ray& ray, 
@@ -49,13 +51,14 @@ private:
     }
     
 public:
-    RaytraceMesh(const std::string& name, const PolygonMesh<VertexAttrib>& mesh)
+    RaytraceMesh(const std::string& name, const util::PolygonMesh<VertexAttrib>& mesh)
         : name(name), mesh(mesh) {}
 
     HitRecord intersect(const Ray& rayObject, 
                        const Ray& rayView,
                        const glm::mat4& modelview,
-                       const glm::mat4& normalMatrix) {
+                       const glm::mat4& normalMatrix,
+                       const util::Material& material) {
         HitRecord closestHit;
         closestHit.t = std::numeric_limits<float>::max();
         const std::vector<VertexAttrib>& vertices = mesh.getVertexAttributes();
@@ -83,8 +86,7 @@ public:
                     glm::vec3 pointObj = rayObject.at(t);
                     glm::vec3 pointView = glm::vec3(modelview * glm::vec4(pointObj, 1.0f));
                     glm::vec3 normalView = glm::normalize(glm::vec3(normalMatrix * glm::vec4(normalObj, 0.0f)));
-                    Material mat; 
-                    closestHit.setHit(t, pointView, normalView, mat);
+                    closestHit.setHit(t, pointView, normalView, material);
                 }
             }
         }
@@ -94,4 +96,6 @@ public:
     std::string getName() const { return name; }
 };
 
-#endif 
+}
+
+#endif

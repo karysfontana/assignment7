@@ -205,6 +205,7 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
 	projection = glm::perspective(glm::radians(60.0f),(float)window_width/window_height,0.1f,10000.0f);
     glViewport(0, 0, window_width,window_height);
     renderer = new sgraph::GLScenegraphRenderer(modelview,objects,shaderLocations);    
+    raytracer = new ray::Raytracer(800, 800, modelview, meshes, scenegraph);
 }
 
 //Camera Mode 4 is handled here. Using the inverse of the renderer's animation to follow the plane.
@@ -225,15 +226,20 @@ void View::display(sgraph::IScenegraph *scenegraph) {
     } else {
         modelview.top() = modelview.top() * glm::lookAt(look, target,glm::vec3(0.0f,1.0f,0.0f));
     }
-    glUniformMatrix4fv(current.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(shaderLocations.getLocation("projection"), 1, GL_FALSE, glm::value_ptr(projection));
     sgraph::GLLightRenderer lights(modelview, shaderLocations);
     lights.setTick(tick);
     scenegraph->getRoot()->accept(&lights);
-    if (raycastMode) {
-        std::vector<util::Light*> lights = lights.getLights();
-        raycaster->render(lights);
-        raycaster->saveImage("raytracer.ppm");
-        raycastMode = false;
+    if (raycast) {
+        std::vector<util::Light> rayLightsVec;
+        lights.getAllLights(rayLightsVec);
+        std::vector<util::Light*> rayLights;
+        for (util::Light& light : rayLightsVec) {
+            rayLights.push_back(&light);
+        }
+        raytracer->render(rayLights);
+        raytracer->saveImage("raytracer.ppm");
+        raycast = false;
         return;
     }
     lights.setLights();

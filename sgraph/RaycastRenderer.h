@@ -2,8 +2,16 @@
 #define _RAYCASTRENDERER_H_
 
 #include "SGNodeVisitor.h"
-#include "RaycastingHelpers.h"
-#include "RaytraceMesh.h"
+#include "GroupNode.h"
+#include "LeafNode.h"
+#include "TransformNode.h"
+#include "ScaleTransform.h"
+#include "RotateTransform.h"
+#include "TranslateTransform.h"
+#include "AnimationTransform.h"
+#include "../ray/RaytraceMesh.h"
+#include "../ray/HitRecord.h"
+#include "../ray/Ray.h"
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
 #include <stack>
@@ -12,6 +20,7 @@
 #include <vector>
 #include <iostream>
 #include <glm/glm.hpp>
+using namespace std;
 
 namespace sgraph {
 /**
@@ -20,11 +29,11 @@ namespace sgraph {
  */
 class RaycastRenderer : public SGNodeVisitor {
 public:
-    RaycastRenderer(std::stack<glm::mat4>& mv,
-                   std::map<std::string, util::PolygonMesh<VertexAttrib>>& meshes)
+    RaycastRenderer(stack<glm::mat4>& mv,
+                   map<string, util::PolygonMesh<VertexAttrib>>& meshes)
         : modelview(mv), tick(0), animationTransform(glm::mat4(1.0f)) {
         for (auto& pair : meshes) {
-            raytraceMeshes[pair.first] = new util::RaytraceMesh(pair.first, pair.second);
+            raytraceMeshes[pair.first] = new ray::RaytraceMesh(pair.first, pair.second);
         }
     }
     
@@ -34,27 +43,29 @@ public:
         }
     }
     
-    void setRay(const util::Ray& ray) {
+    void setRay(const ray::Ray& ray) {
         currentRay = ray;
         closestHit.clear();
     }
     
-    util::HitRecord getClosestHit() const {
+    ray::HitRecord getClosestHit() const {
         return closestHit;
     }
     
-    void setTextureImages(std::map<std::string, util::TextureImage*> texImages) {
+    void setTextureImages(map<string, util::TextureImage*> texImages) {
         textureImages = texImages;
     }
     
-    void visitGroupNode(GroupNode *node) {
-        for (int i=0;i<groupNode->getChildren().size();i=i+1) {
+    void setTextureMap(map<string, unsigned int> textureIds) {}
+    
+    void visitGroupNode(GroupNode *groupNode) {
+        for (size_t i = 0; i < groupNode->getChildren().size(); i++) {
             groupNode->getChildren()[i]->accept(this);
         }
     }
     
     void visitLeafNode(LeafNode *node) {
-        std::string meshName = node->getMeshName();
+        string meshName = node->getName();
         if (raytraceMeshes.find(meshName) == raytraceMeshes.end()) {
             return;
         }
@@ -63,8 +74,8 @@ public:
         glm::mat4 normalMatrix = glm::transpose(inverseModelview);
         glm::vec3 rayOriginObj = glm::vec3(inverseModelview * glm::vec4(currentRay.origin, 1.0f));
         glm::vec3 rayDirObj = glm::normalize(glm::vec3(inverseModelview * glm::vec4(currentRay.direction, 0.0f)));
-        util::Ray objectRay(rayOriginObj, rayDirObj);
-        util::HitRecord hit = raytraceMeshes[meshName]->intersect(
+        ray::Ray objectRay(rayOriginObj, rayDirObj);
+        ray::HitRecord hit = raytraceMeshes[meshName]->intersect(
             objectRay, 
             currentRay, 
             currentModelview, 
@@ -79,7 +90,7 @@ public:
     void visitTransformNode(TransformNode *transformNode) {
         modelview.push(modelview.top());
         modelview.top() = modelview.top() * transformNode->getTransform();
-        if (transformNode->getChildren().size()>0) {
+        if (transformNode->getChildren().size() > 0) {
             transformNode->getChildren()[0]->accept(this);
         }
         modelview.pop();
@@ -97,9 +108,9 @@ public:
         visitTransformNode(rotationNode);
     }
     
-    void visitAnimationTransform(AnimationTransform *node) {
+    void visitAnimationTransform(AnimationTransform *animationNode) {
         animationNode->setAnimation(tick);
-        this->setAnimation(animationNode);
+        animationTransform = animationNode->getTransform();
         visitTransformNode(animationNode);
     }
     
@@ -116,13 +127,15 @@ public:
     }
     
 private:
-    std::stack<glm::mat4>& modelview;
-    util::Ray currentRay;
-    util::HitRecord closestHit;
-    std::map<std::string, util::RaytraceMesh*> raytraceMeshes;
-    std::map<std::string, util::TextureImage*> textureImages;
+    stack<glm::mat4>& modelview;
+    ray::Ray currentRay;
+    ray::HitRecord closestHit;
+    map<string, ray::RaytraceMesh*> raytraceMeshes;
+    map<string, util::TextureImage*> textureImages;
     int tick;
     glm::mat4 animationTransform;
     util::ShaderLocationsVault shaderLocations;
 };
 }
+
+#endif
