@@ -1,0 +1,36 @@
+#instances
+instance box models/sphere.obj
+
+#materials
+material box-material
+ambient 1.0 1.0 1.0
+diffuse 1.0 1.0 1.0
+specular 0.5 0.5 0.5
+shininess 50
+end-material
+
+#lights
+light main-light
+ambient 1.0 1.0 1.0
+diffuse 0.8 0.8 0.8
+specular 0.8 0.8 0.8
+position 0 0 10
+end-light
+
+#textures
+image white textures/white.ppm
+
+#the root
+group root root
+assign-light main-light root
+
+#single box at origin
+scale b-scale b-scale 5 5 5
+leaf test-box test-box instanceof box 
+assign-material test-box box-material
+assign-texture test-box white
+
+add-child test-box b-scale
+add-child b-scale root
+
+assign-root root
