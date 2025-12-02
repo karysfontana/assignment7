@@ -11,13 +11,14 @@
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
 #include "Material.h"
+using namespace std;
 
 namespace ray {
 
 class RaytraceMesh {
 private:
     util::PolygonMesh<VertexAttrib> mesh;
-    std::string name;
+    string name;
     
     bool intersectTriangle(const Ray& ray, 
                           const glm::vec3& v0, 
@@ -51,7 +52,7 @@ private:
     }
     
 public:
-    RaytraceMesh(const std::string& name, const util::PolygonMesh<VertexAttrib>& mesh)
+    RaytraceMesh(const string& name, const util::PolygonMesh<VertexAttrib>& mesh)
         : name(name), mesh(mesh) {}
 
     HitRecord intersect(const Ray& rayObject, 
@@ -60,9 +61,9 @@ public:
                        const glm::mat4& normalMatrix,
                        const util::Material& material) {
         HitRecord closestHit;
-        closestHit.t = std::numeric_limits<float>::max();
-        const std::vector<VertexAttrib>& vertices = mesh.getVertexAttributes();
-        const std::vector<unsigned int>& primitives = mesh.getPrimitives();
+        closestHit.t = numeric_limits<float>::max();
+        const vector<VertexAttrib>& vertices = mesh.getVertexAttributes();
+        const vector<unsigned int>& primitives = mesh.getPrimitives();
         int primitiveType = mesh.getPrimitiveType();
         int primitiveSize = mesh.getPrimitiveSize();
         if (primitiveType != GL_TRIANGLES || primitiveSize != 3) {
@@ -93,7 +94,7 @@ public:
         return closestHit;
     }
     
-    std::string getName() const { return name; }
+    string getName() const { return name; }
 };
 
 }

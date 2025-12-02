@@ -10,13 +10,14 @@
 #include "../sgraph/IScenegraph.h"
 #include <stack>
 #include <iostream>
+using namespace std;
 
 namespace ray {
 class Raytracer {
     public:
     Raytracer(int w, int h, 
-              std::stack<glm::mat4>& mv,
-              std::map<std::string, util::PolygonMesh<VertexAttrib>>& meshes,
+              stack<glm::mat4>& mv,
+              map<string, util::PolygonMesh<VertexAttrib>>& meshes,
               sgraph::IScenegraph* sg)
         : width(w), height(h), modelview(mv), scenegraph(sg), fov(60.0f) {
         imageData.resize(width * height * 3);
@@ -27,7 +28,7 @@ class Raytracer {
         delete renderer;
     }
     
-    void setTextureImages(std::map<std::string, util::TextureImage*> texImages) {
+    void setTextureImages(map<string, util::TextureImage*> texImages) {
         renderer->setTextureImages(texImages);
     }
     
@@ -41,7 +42,7 @@ class Raytracer {
         return Ray(origin, direction);
     }
     
-    glm::vec3 computeColor(const HitRecord& hit, const std::vector<util::Light*>& lights) {
+    glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights) {
         if (!hit.isHit()) {
             return glm::vec3(0.0f, 0.0f, 0.0f);
         }
@@ -58,12 +59,12 @@ class Raytracer {
             } else {
                 lightDir = glm::normalize(glm::vec3(lightPos) - hit.point);
             }
-            float diffuseFactor = std::max(glm::dot(hit.normal, lightDir), 0.0f);
+            float diffuseFactor = max(glm::dot(hit.normal, lightDir), 0.0f);
             color += diffuseFactor * glm::vec3(diffuse) * glm::vec3(light->getDiffuse());
             if (diffuseFactor > 0.0f) {
                 glm::vec3 viewDir = glm::normalize(-hit.point);
                 glm::vec3 reflectDir = glm::reflect(-lightDir, hit.normal);
-                float specFactor = pow(std::max(glm::dot(viewDir, reflectDir), 0.0f), shininess);
+                float specFactor = pow(max(glm::dot(viewDir, reflectDir), 0.0f), shininess);
                 color += specFactor * glm::vec3(specular) * glm::vec3(light->getSpecular());
             }
         }
@@ -76,7 +77,7 @@ class Raytracer {
         return renderer->getClosestHit();
     }
     
-    void render(const std::vector<util::Light*>& lights) {
+    void render(const vector<util::Light*>& lights) {
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 Ray ray = generateRay(i, j);
@@ -90,7 +91,7 @@ class Raytracer {
         }
     }
     
-    void saveImage(const std::string& filename) {
+    void saveImage(const string& filename) {
         FILE* fp = fopen(filename.c_str(), "w"); 
         if (!fp) {
             return;
@@ -107,8 +108,8 @@ class Raytracer {
 
     private:
         int width, height;
-        std::vector<unsigned char> imageData;
-        std::stack<glm::mat4>& modelview;
+        vector<unsigned char> imageData;
+        stack<glm::mat4>& modelview;
         sgraph::RaycastRenderer* renderer;
         sgraph::IScenegraph* scenegraph;
         float fov;

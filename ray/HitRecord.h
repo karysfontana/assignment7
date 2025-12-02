@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "TextureImage.h"
 #include <limits>
+using namespace std;
 
 namespace ray {
 class HitRecord {
@@ -15,7 +16,7 @@ public:
     util::Material material;                        
     bool hit;                      
     
-    HitRecord() : t(std::numeric_limits<float>::max()), hit(false) {}
+    HitRecord() : t(numeric_limits<float>::max()), hit(false) {}
     
     void setHit(float t, const glm::vec3& point, const glm::vec3& normal, 
                 const util::Material& material) {
@@ -30,7 +31,7 @@ public:
     
     void clear() {
         hit = false;
-        t = std::numeric_limits<float>::max();
+        t = numeric_limits<float>::max();
     }
     
     glm::vec4 getColor() const {
