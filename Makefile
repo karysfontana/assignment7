@@ -5,9 +5,14 @@ LDFLAGS = -lglad -lglfw3
 CFLAGS = -g -std=c++11
 PROGRAM = Hogwarts
 
-LDFLAGS += -lopengl32 -lgdi32
-PROGRAM :=$(addsuffix .exe,$(PROGRAM))
-COMPILER = g++
+ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
+    LDFLAGS += -lopengl32 -lgdi32
+    PROGRAM :=$(addsuffix .exe,$(PROGRAM))
+	COMPILER = g++
+else ifeq ($(shell uname -s),Darwin)     # is MACOSX
+    LDFLAGS += -framework Cocoa -framework OpenGL -framework IOKit
+	COMPILER = clang++
+endif
 
 Hogwarts: $(OBJS)
 	$(COMPILER) -o $(PROGRAM) $(OBJS) $(LIBS) $(LDFLAGS)
