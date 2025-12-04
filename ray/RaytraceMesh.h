@@ -20,7 +20,7 @@ private:
     util::PolygonMesh<VertexAttrib> mesh;
     string name;
     
-    bool intersectTriangle(const Ray& ray, 
+    bool checkIntersect(const Ray& ray, 
                           const glm::vec3& v0, 
                           const glm::vec3& v1, 
                           const glm::vec3& v2,
@@ -72,7 +72,7 @@ public:
         glm::vec3 v2 = vertices[prim2].getPosition();
         glm::vec3 v3 = vertices[prim3].getPosition();
         float t, u, v;
-        if (intersectTriangle(rayObject, v1, v2, v3, t, u, v)) {
+        if (checkIntersect(rayObject, v1, v2, v3, t, u, v)) {
             if (t > 0.001f) {
                 glm::vec3 point = rayObject.at(t);
                 glm::vec3 pv = glm::vec3(mv * glm::vec4(point, 1.0f));                
