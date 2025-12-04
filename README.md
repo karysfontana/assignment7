@@ -32,7 +32,10 @@ sections 12.3.1 & 12.3.2 (I know it's technically for BSP trees, however, it doe
 - I created three public getters so that I could easily access the left and right nodes and the plane 
 - I decided to make a secondary method (intersectNode) to handle the leaf nodes and the four cases 
     for the internal nodes so I could focus on the Moller-Trumbore in the intersectTriangles method. 
-
+For optimization: Andres and I spoke about how to use the bounding box method for optimization and from there: 
+- I set both tmin & tmax to infinity in intersect_bounding_box to infinity so that the values could be 
+    found to traverse the tree. 
+- I changed the given intersect method (again) so that it checks if the ray misses the box BEFORE traversing. 
 **Issues**
 The technical difficulties I gathered from the Toon Mode and Mipmapping are really strange.
 I do apologize for their faulty implementation, but they are working to an extent:
