@@ -76,7 +76,6 @@ public:
         unsigned int idx0 = primitives[i];
         unsigned int idx1 = primitives[i + 1];
         unsigned int idx2 = primitives[i + 2];
-        
         glm::vec3 v0 = vertices[idx0].getPosition();
         glm::vec3 v1 = vertices[idx1].getPosition();
         glm::vec3 v2 = vertices[idx2].getPosition();
