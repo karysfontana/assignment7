@@ -41,6 +41,30 @@ class Raytracer {
         glm::vec3 direction = glm::normalize(glm::vec3(x, y, -1.0f));
         return Ray(origin, direction);
     }
+
+    bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
+        glm::vec3 direction;
+        float max;
+        if (light->getSpotCutoff() != 0.0f) {
+            glm::vec3 position = glm::vec3(light->getPosition());
+            direction = position - point;
+            max = glm::length(direction);
+            direction = glm::normalize(direction);
+        } else {
+            direction = glm::normalize(-glm::vec3(light->getPosition()));
+            max = std::numeric_limits<float>::max();
+        }        
+        glm::vec3 shadow = point + normal * 0.001f;
+        Ray shadowRay(shadow, direction);
+        HitRecord shadowHit = castRay(shadowRay);        
+        if (shadowHit.isHit()) {
+            float distance = glm::length(shadowHit.point - shadow);
+            if (distance < max) {
+                return true; 
+            }
+        }
+        return false; 
+    }
     
     glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights) {
         if (!hit.isHit()) {
@@ -54,6 +78,9 @@ class Raytracer {
         glm::vec3 view = glm::normalize(-hit.point);
         glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
+            if (inShadow(hit.point, normal, light)) {
+                continue; 
+            }
             glm::vec4 lightPos = light->getPosition();
             float spotAngle = light->getSpotCutoff();
             glm::vec3 lightVec;
