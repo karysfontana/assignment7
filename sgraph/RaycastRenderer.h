@@ -44,20 +44,14 @@ public:
     }
     
     void setRay(const ray::Ray& ray) {
-        currentRay = ray;
-        closestHit.clear();
+        current = ray;
+        closest.clear();
     }
     
     ray::HitRecord getClosestHit() const {
-        return closestHit;
+        return closest;
     }
-    
-    void setTextureImages(map<string, util::TextureImage*> texImages) {
-        textureImages = texImages;
-    }
-    
-    void setTextureMap(map<string, unsigned int> textureIds) {}
-    
+        
     void visitGroupNode(GroupNode *groupNode) {
         for (size_t i = 0; i < groupNode->getChildren().size(); i++) {
             groupNode->getChildren()[i]->accept(this);
@@ -69,21 +63,20 @@ public:
         if (raytraceMeshes.find(meshName) == raytraceMeshes.end()) {
             return;
         }
-        glm::mat4 currentModelview = modelview.top();
-        glm::mat4 inverseModelview = glm::inverse(currentModelview);
-        glm::mat4 normalMatrix = glm::transpose(inverseModelview);
-        glm::vec3 rayOriginObj = glm::vec3(inverseModelview * glm::vec4(currentRay.origin, 1.0f));
-        glm::vec3 rayDirObj = glm::normalize(glm::vec3(inverseModelview * glm::vec4(currentRay.direction, 0.0f)));
-        ray::Ray objectRay(rayOriginObj, rayDirObj);
+        glm::mat4 inverse = glm::inverse(modelview.top());
+        glm::mat4 normal = glm::transpose(inverse);
+        glm::vec3 origin = glm::vec3(inverse * glm::vec4(current.origin, 1.0f));
+        glm::vec3 direction = glm::normalize(glm::vec3(inverse * glm::vec4(current.direction, 0.0f)));
+        ray::Ray newRay(origin, direction);
         ray::HitRecord hit = raytraceMeshes[meshName]->intersect(
-            objectRay, 
-            currentRay, 
-            currentModelview, 
-            normalMatrix,
+            newRay, 
+            current, 
+            modelview.top(), 
+            normal,
             node->getMaterial()
         );
-        if (hit.isHit() && hit.t < closestHit.t) {
-            closestHit = hit;
+        if (hit.isHit() && hit.t < closest.t) {
+            closest = hit;
         }
     }
     
@@ -126,12 +119,16 @@ public:
         shaderLocations = locations;
     }
     
+    void setTextureMap(const map<string,unsigned int> textureIds) {
+        ids = textureIds;
+    }
+    
 private:
     stack<glm::mat4>& modelview;
-    ray::Ray currentRay;
-    ray::HitRecord closestHit;
+    ray::Ray current;
+    ray::HitRecord closest;
     map<string, ray::RaytraceMesh*> raytraceMeshes;
-    map<string, util::TextureImage*> textureImages;
+    map<string, unsigned int> ids;
     int tick;
     glm::mat4 animationTransform;
     util::ShaderLocationsVault shaderLocations;

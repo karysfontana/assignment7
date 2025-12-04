@@ -20,7 +20,7 @@ class Raytracer {
               map<string, util::PolygonMesh<VertexAttrib>>& meshes,
               sgraph::IScenegraph* sg)
         : width(w), height(h), modelview(mv), scenegraph(sg), fov(60.0f) {
-        imageData.resize(width * height * 3);
+        image.resize(width * height * 3);
         renderer = new sgraph::RaycastRenderer(mv, meshes);
     }
     
@@ -28,8 +28,8 @@ class Raytracer {
         delete renderer;
     }
     
-    void setTextureImages(map<string, util::TextureImage*> texImages) {
-        renderer->setTextureImages(texImages);
+    void setTextureImages(map<string, unsigned int> texImages) {
+        renderer->setTextureMap(texImages);
     }
     
     Ray generateRay(int i, int j) {
@@ -116,10 +116,10 @@ class Raytracer {
                 Ray ray = generateRay(i, j);
                 HitRecord hit = castRay(ray);
                 glm::vec3 color = computeColor(hit, lights);
-                int idx = 3 * (j * width + i);
-                imageData[idx + 0] = (unsigned char)(color.r * 255);
-                imageData[idx + 1] = (unsigned char)(color.g * 255);
-                imageData[idx + 2] = (unsigned char)(color.b * 255);
+                int id = 3 * (j * width + i);
+                image[id] = (unsigned char)(color.r * 255);
+                image[id + 1] = (unsigned char)(color.g * 255);
+                image[id + 2] = (unsigned char)(color.b * 255);
             }
         }
     }
@@ -130,8 +130,8 @@ class Raytracer {
             return;
         }
         fprintf(fp, "P3\n%d %d\n255\n", width, height);
-        for (int i = 0; i < imageData.size(); i += 3) {
-            fprintf(fp, "%d %d %d ", imageData[i], imageData[i+1], imageData[i+2]);
+        for (int i = 0; i < image.size(); i += 3) {
+            fprintf(fp, "%d %d %d ", image[i], image[i+1], image[i+2]);
             if ((i/3 + 1) % width == 0) {
                 fprintf(fp, "\n");  
             }
@@ -141,7 +141,7 @@ class Raytracer {
 
     private:
         int width, height;
-        vector<unsigned char> imageData;
+        vector<unsigned char> image;
         stack<glm::mat4>& modelview;
         sgraph::RaycastRenderer* renderer;
         sgraph::IScenegraph* scenegraph;
