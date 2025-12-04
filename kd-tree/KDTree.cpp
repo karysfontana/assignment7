@@ -221,12 +221,202 @@ void KDTree::assignTrianglesToNode(KDNode* n, const vector<int>& triangleList)
         {
             // Doesn't lie on the plane exactly, must belong to either left or right node. 
             if (neg)
+            {
                 leftList.push_back(tID); 
+            }
             if (pos)
+            {
                 rightList.push_back(tID); 
+            }
         }
     }
-    // Recurse downwards. 
+    // Traverse downwards recursively. 
     assignTrianglesToNode(internal->getLeft(), leftList); 
     assignTrianglesToNode(internal->getRight(), rightList); 
+}
+/**
+ * @brief Method to check for triangle intersections with one ray tracer ray. 
+ * 
+ * @param ray raytracer. 
+ * @param tri triangle to check for intersection with ray. 
+ * @return HitRecord location of where ray intersects with triangle. 
+ */
+
+HitRecord KDTree::intersectTriangle(const Ray&ray, const glm::ivec3& tri)
+{
+    HitRecord hit; 
+    hit.t = std::numeric_limits<float>::infinity(); 
+
+    // Get triangle vertices 
+    glm::vec3 v0 = vertices[tri.x]; 
+    glm::vec3 v1 = vertices[tri.y];
+    glm::vec3 v2 = vertices[tri.z]; 
+
+    // Moller-Trumbore 
+    const float EPSILON = 1e-8f; 
+    glm::vec3 edge1 = v1 - v0; 
+    glm::vec3 edge2 = v2 - v0; 
+    glm::vec3 h = glm::cross(ray.direction, edge2); 
+    float a = glm::dot(edge1, h); 
+
+    // If ray is parallel to triangle. 
+    if (fabs(a) < EPSILON)
+        return hit; 
+
+    // 'Else' ray is not parallel to triangle
+    float f = 1.0f / a; 
+    glm::vec3 s = ray.origin - v0; 
+    u = f * glm::dot(s, h); 
+    if (u < 0.0f || u > 1.0f)
+        return hit; 
+
+    glm::vec3 q = glm::cross(s, edge1); 
+    float v = f * glm::dot(ray.direction, q); 
+    if (v < 0.0f || u + v > 1.0f)
+        return hit; 
+
+    float t = f * glm::dot(edge2, q);
+    // If ray intersects triangle
+    if (t > EPSILON)
+    {
+        hit.t = t; 
+        hit.position = ray.origin + t * ray.direction; 
+
+        // Interpolation for vertex normals to normal 
+        glm::vec3 n0 = normals[tri.x];
+        glm::vec3 n1 = normals[tri.y]; 
+        glm::vec3 n1 = normals[tri.z]; 
+        hit.normal = glm::normalize((1 - u - v) * n0 + u * n1 + v * n2);  
+    }
+    return hit; 
+}
+/**
+ * @brief Method that dertermines which sides of the tree rhe ray visits based on position relative to plane. 
+ * 
+ * @param node reference to node to intersect. 
+ * @param ray copy of ray for intersection. 
+ * @param tmin minimum value (=0). 
+ * @param tmax maximum value (= infinity). 
+ * @return HitRecord location of node intersection. 
+ */
+HitRecord KDTree::intersectNode(KDNode* node, Ray& ray, float tmin, float tmax)
+{
+    // Empty hit check 
+    if (!node)
+        return HitRecord(); 
+    KDLeafNode* leaf = dynamic_cast<KDLeafNode*>(node); 
+    // Test all triangles for leaf node, return closest hit. 
+    if (leaf)
+    {
+        HitRecord closestHit; 
+        closestHit.t = std::numeric_limits<float>::infinity(); 
+        for (int tID : leaf->triangleIndices)
+        {
+            glm::ivec3 tri = triangles[tID];
+            HitRecord hit = intersectTriangle(ray, tri); 
+            if (hit.t >= tmin && hit.t <= tmax && hit.t < closestHit.t)
+                closestHit = hit; 
+        }
+        return closestHit; 
+    }
+
+    KDInternalNode* internal = dynamic_cast<KDInternalNode*>(node); 
+    if (!internal)
+        return HitRecord(); 
+
+    glm::vec4 plane = internal->getPlane(); 
+    glm::vec3 planeNormal = glm::vec3(plane); 
+    float planeD = plane.w; 
+
+    // Math for distances of P and Q to the plane 
+    glm::vec3 P = ray.origin + tmin * ray.direction; 
+    glm::vec3 Q = ray.origin + tmax * ray.direction; 
+    float distP = glm::dot(planeNormal, P) + planeD; 
+    float distQ = glm::dot(planeNormal, Q) + planeD; 
+    const float EPSILON = 1e-6f; 
+
+    // Determine sides 
+    KDNode* first = nullptr; 
+    KDNode* second = nullptr; 
+    if(distP > EPSILON)
+    {
+        first = internal->getLeft(); 
+        second = internal->getRight();
+    }
+    else if (distP > EPSILON)
+    {
+        first = internal->getRight(); 
+        second = internal->getLeft(); 
+    }
+    // If P is on plane
+    else 
+    {
+        first = internal->getLeft(); 
+        second = internal->getRight(); 
+    }
+    HitRecord hit; 
+
+    // Check ray intersecting plane. 
+    float denom = glm::dot(planeNormal, ray.direction); 
+    float t_plane = std::numeric_limits<float>::infinity(); 
+    if (fabs(denom) > EPSILON)
+    {
+        t_plane = -(glm::dot(planeNormal, ray.origin) + planeD) / denom; 
+    }
+    // If ray lies on plane (when denom = 0). 
+    if (fabs(denom) < EPSILON || fabs(distP) < EPSILON && fabs(distQ) < EPSILON)
+    {
+        HitRecord hitLeft = intersectNode(internal->getLeft(), ray, tmin, tmax); 
+        HitRecord hitRight = intersectNode(internal->getRight(), ray, tmin, tmax); 
+
+        // Triangles lying exactly on the plane. 
+        for (int tID : internal->triangleIndices)
+        {
+            HitRecord planeHit = intersectTriangle(ray, triangles[tID]); 
+            if (planeHit.t >= tmin && planeHit.t <= tmax)
+            {
+                if (planeHit.t < hitLeft.t)
+                    hitLeft = planeHit; 
+            }
+        }
+        hit = (hitLeft.t < hitRight.t) ? hitLeft : hitRight
+        return hit; 
+    }
+
+    // t_plane lies in (tmin, tmax) so we traverse both sides
+    if (t_plane >= tmin && t_plane <= tmax)
+    {
+        HitRecord hitFirst = intersectNode(first, ray, tmin, t_plane); 
+        HitRecord hitSecond = intersectNode(second, ray, t_plane, tmax); 
+
+        // Triangles lying exactly on the plane. 
+        for (int tID : internal->triangleIndices)
+        {
+            HitRecord planeHit = intersectTriangle(ray, triangles[tID]); 
+            if (planeHit.t >= tmin && planeHit.t <= tmax)
+            {
+                if (planeHit.t < hitLeft.t)
+                    hitLeft = planeHit; 
+            }
+        }
+
+        hit = (hitFirst.t < hitSecond.t) ? hitFirst : hitSecond; 
+    }
+    // Traverse only the side P is on
+    else 
+    {
+        hit = intersectNode(first, ray, tmin, tmax); 
+
+        // Check plane triangles 
+        if(fabs(distP) < EPSILON)
+        {
+            for (int tID : internal->triangleIndices)
+            {
+                HitRecord planeHit = intersectTriangle(ray, triangles[tID]); 
+                if (planeHit.t >= tmin && planeHit.t <= tmax && planeHit.t < hit.t)
+                    hit = planeHit; 
+            }
+        }
+    }
+    return hit; 
 }
