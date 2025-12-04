@@ -21,7 +21,8 @@ class KDTree {
 
     virtual HitRecord intersect(Ray& objectRay,Ray& viewRay,glm::mat4 normalMatrix);
 
-
+    // Helper method to assign triangles 
+    void assignTrianglesToNode(KDNode* node, const vector<int>& triangleIDs); 
 
     private:
     KDNode *buildKDTree(int maxPointsPerLeaf);
@@ -34,6 +35,7 @@ class KDTree {
     int maxPointsPerLeaf;
     vector<glm::vec3> vertices;
     vector<glm::vec3> normals;
+    // Was included from import 
     vector<glm::ivec3> triangles;
     glm::vec3 minBounds,maxBounds;
 };

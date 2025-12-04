@@ -22,8 +22,24 @@ KDTree::KDTree(util::PolygonMesh<VertexAttrib>& mesh) {
     root = buildKDTree(maxPointsPerLeaf);
 
     //now extract and add the triangles to the kdtree
-    
-        
+    // Load primitives 
+    vector<unsigned int> prim = mesh.getPrimitives(); 
+    int primSize = mesh.getPrimitiveSize(); 
+    // Since this is after the vertices and normals are loaded, assume triangles 
+    for (int i = 0; i < prim.size(); i += primSize)
+    {
+        glm:ivec3 tri(
+            prim[i], 
+            prim[i + 1], 
+            prim[i + 2]
+        ); 
+        triangles.push_back(tri); 
+    }
+
+    // Assign triangles to KDNodes.
+    vector<int> allTri(triangles.size());
+    iota(allTri.begin(), allTri.end(), 0); 
+    assignTrianglesToNode(root, allTri);     
 }
 
 KDTree::~KDTree() {
@@ -138,4 +154,79 @@ KDNode *KDTree::buildKDTree(vector<int>& sortedByX,vector<int>& sortedByY,vector
 bool KDTree::intersect_bounding_box(Ray& objectRay,float *min_t,float *max_t) {
     
     return false;
+}
+
+/**
+ * @brief Assigns triangles from list to node based on plane location. 
+ * 
+ * @param n node that triangles are being assigned to. 
+ * @param triangleList list of triangles to assign. 
+ */
+void KDTree::assignTrianglesToNode(KDNode* n, const vector<int>& triangleList)
+{
+    if (!n) 
+        return; 
+
+    KDAbstractNode* node = dynamic_cast<KDAbstractNode>(n); 
+    KDInternalNode* internal = dynamic_cast<KDInternalNode>(n); 
+    KDLeafNode* leaf = dynamic_cast<KDLeafNode>(n); 
+
+    if (!node)
+        return; 
+
+    // Leaf node will store all triangles that touch 
+    if (leaf)
+    {
+        for (int tID : triangleList)
+        {
+            glm::ivec3 tri = triangles[tID]; 
+            int v0 = tri.x, 
+                v1 = tri.y,
+                v2 = tri.z; 
+            
+            bool belongs = 
+                find(node->indices.begin(), node->indices.end(), v0) != node->indices.end() ||
+                find(node->indices.begin(), node->indices.end(), v1) != node->indices.end() ||
+                find(node->indices.begin(), node->indices.end(), v2) != node->indices.end(); 
+            if (belongs)
+                node->triangleIndices.push_back(tID);       
+        }
+        return; 
+    }
+
+    // Handle internal node 
+    glm::vec4 plane = internal->getPlane(); 
+    vector<int> leftList, rightList, onList; 
+    // group triangles relative to plane 
+    for (int tID : triangleList)
+    {
+        auto tri = triangles[tID]; 
+        glm::vec3 p0 = vertices[tri.x]; 
+        glm::vec3 p1 = vertices[tri.y]; 
+        glm::vec3 p2 = vertices[tri.z]; 
+
+        float d0 = dot(plane, glm::vec4(p0, 1)); 
+        float d1 = dot(plane, glm::vec4(p1, 1)); 
+        float d2 = dot(plane, glm::vec4(p2, 1)); 
+
+        bool neg = (d0 < 0) || (d1 < 0) || (d2 < 0); 
+        bool pos = (d0 > 0) || (d1 > 0) || (d2 > 0); 
+
+        if (!neg && !pos)
+        {
+            // Triangle lies on the plane exactly, belongs to this internal node. 
+            node->triangleIndices.push_back(tID); 
+        }
+        else 
+        {
+            // Doesn't lie on the plane exactly, must belong to either left or right node. 
+            if (neg)
+                leftList.push_back(tID); 
+            if (pos)
+                rightList.push_back(tID); 
+        }
+    }
+    // Recurse downwards. 
+    assignTrianglesToNode(internal->getLeft(), leftList); 
+    assignTrianglesToNode(internal->getRight(), rightList); 
 }
