@@ -50,9 +50,16 @@ KDTree::~KDTree() {
 }
 
 HitRecord KDTree::intersect(Ray& objectRay,Ray& viewRay,glm::mat4 normalMatrix) {
-    float tmin = 0.0f; 
-    float tmax = std::numeric_limits<float>::infinity(); 
+    HitRecord hit;
+    hit.t = std::numeric_limits<float>::infinity(); 
 
+    float tmin, tmax; 
+
+    // IF ray misses box, skip ! 
+    if (!intersect_bounding_box(objectRay, &tmin, &tmax))
+        return hit; 
+    
+    // ELSE do kd traversal 
     return intersectNode(root, objectRay, tmin, tmax); 
 }
 
@@ -154,8 +161,34 @@ KDNode *KDTree::buildKDTree(vector<int>& sortedByX,vector<int>& sortedByY,vector
 }
 
 bool KDTree::intersect_bounding_box(Ray& objectRay,float *min_t,float *max_t) {
-    
-    return false;
+    // Make tmin and tmax variables & set to infinity so that the actual values can be found. 
+    float tmin = -std::numeric_limits<float>::infinity();
+    float tmax =  std::numeric_limits<float>::infinity();
+
+    glm::vec3 origin = objectRay.origin; 
+    glm::vec3 dir = objectRay.direction; 
+
+    // Iterate for each axis 
+    for (int axis = 0; axis < 3; axis++)
+    {
+        float invD = 1.0f / dir[axis]; 
+        float t0 = (minBounds[axis] - origin[axis]) * invD; 
+        float t1 = (maxBounds[axis] - origin[axis]) * invD; 
+
+        if (invD < 0.0f)
+            std::swap(t0, t1); 
+
+        tmin = std::max(tmin, t0); 
+        tmax = std::min(tmax, t1)
+
+        // If the ray misses (o intersection). 
+        if (tmax < tmin)
+            return false; 
+    }
+    float *min_t = tmin; 
+    float *max_t = tmax; 
+    // Ray is between tmin and tmax when it intersects the box 
+    return true;
 }
 
 /**
