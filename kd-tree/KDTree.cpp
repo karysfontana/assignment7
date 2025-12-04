@@ -1,5 +1,6 @@
 #include "KDTree.h"
 #include <iostream>
+#include <limits>
 using namespace std;
 
 KDTree::KDTree(util::PolygonMesh<VertexAttrib>& mesh) {
@@ -49,9 +50,10 @@ KDTree::~KDTree() {
 }
 
 HitRecord KDTree::intersect(Ray& objectRay,Ray& viewRay,glm::mat4 normalMatrix) {
-    HitRecord hitRecord;
+    float tmin = 0.0f; 
+    float tmax = std::numeric_limits<float>::infinity(); 
 
-    return hitRecord;
+    return intersectNode(root, objectRay, tmin, tmax); 
 }
 
 
