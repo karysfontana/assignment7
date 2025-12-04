@@ -11,6 +11,14 @@ specular 0.8 0.8 0.8
 shininess 100
 end-material
 
+material box2-material
+emission 0 0 0
+ambient 0 0.3 0.3
+diffuse 0 0.8 0.8
+specular 0 0.8 0.8
+shininess 100
+end-material
+
 material sphere-material
 emission 0 0 0
 ambient 0.3 0.3 0
@@ -21,20 +29,10 @@ end-material
 
 #lights
 light one-light
-ambient 0.3 0.3 0.3
+ambient 0.6 0.6 0.6
 diffuse 0.5 0.5 0.5
 specular 0.5 0.5 0.5
-position 0 0 30
-end-light
-
-#lights
-light two-light
-ambient 0.3 0.3 0.3
-diffuse 0.5 0.5 0.5
-specular 0.5 0.5 0.5
-position 0 50 0
-spot-direction 0 -1 0 
-spot-angle 20
+position 0 10 0
 end-light
 
 #textures
@@ -44,13 +42,12 @@ image checkerboard textures/checkerboard.ppm
 #the root
 group root root
 assign-light one-light root
-assign-light two-light root
 
 #box
 translate b-translate b-translate -10 0 0
 scale b-scale b-scale 10 10 10
 leaf one-box one-box instanceof box 
-assign-material one-box box-material
+assign-material one-box box2-material
 assign-texture one-box white
 
 add-child one-box b-scale

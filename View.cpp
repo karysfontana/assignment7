@@ -18,7 +18,7 @@ using namespace std;
 // active2, active3, active4 determines what camera mode you are currently in
 // first to manage when the text scengraph renderer prints.
 // tick is used for animation and active3 camera mode to determine the rate of movement.
-glm::vec3 stationaryLook = glm::vec3(0.0f,0.0f,20.0f);
+glm::vec3 stationaryLook = glm::vec3(0.0f,20.0f,40.0f);
 glm::vec3 stationaryTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 look = stationaryLook;
 glm::vec3 target = stationaryTarget;
