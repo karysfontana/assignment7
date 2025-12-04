@@ -90,16 +90,9 @@ public:
     void visitTransformNode(TransformNode *transformNode) {
         modelview.push(modelview.top());
         modelview.top() = modelview.top() * transformNode->getTransform();
-        // loops through ALL children to get closest hit to camera. 
-        for (auto child : transformNode->getChildren())
-        {
-            child->accept(this); 
-        }
-        /* this doesn't work bc it only visits the first child node. 
         if (transformNode->getChildren().size() > 0) {
             transformNode->getChildren()[0]->accept(this);
         }
-        */
         modelview.pop();
     }
     

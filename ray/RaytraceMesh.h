@@ -55,44 +55,52 @@ public:
     RaytraceMesh(const string& name, const util::PolygonMesh<VertexAttrib>& mesh)
         : name(name), mesh(mesh) {}
 
-    HitRecord intersect(const Ray& rayObject, 
-                       const Ray& rayView,
-                       const glm::mat4& modelview,
-                       const glm::mat4& normalMatrix,
-                       const util::Material& material) {
-        HitRecord closestHit;
-        closestHit.t = numeric_limits<float>::max();
-        const vector<VertexAttrib>& vertices = mesh.getVertexAttributes();
-        const vector<unsigned int>& primitives = mesh.getPrimitives();
-        int primitiveType = mesh.getPrimitiveType();
-        int primitiveSize = mesh.getPrimitiveSize();
-        if (primitiveType != GL_TRIANGLES || primitiveSize != 3) {
-            return closestHit;
-        }    
-        for (size_t i = 0; i < primitives.size(); i += 3) {
-            unsigned int idx0 = primitives[i];
-            unsigned int idx1 = primitives[i + 1];
-            unsigned int idx2 = primitives[i + 2];
-            glm::vec3 v0 = vertices[idx0].getPosition();
-            glm::vec3 v1 = vertices[idx1].getPosition();
-            glm::vec3 v2 = vertices[idx2].getPosition();
-            float t, u, v;
-            if (intersectTriangle(rayObject, v0, v1, v2, t, u, v)) {
-                if (t > 0.001f && t < closestHit.t) {
-                    float w = 1.0f - u - v;
+   HitRecord intersect(const Ray& rayObject, 
+                   const Ray& rayView,
+                   const glm::mat4& modelview,
+                   const glm::mat4& normalMatrix,
+                   const util::Material& material) {
+    HitRecord closestHit;
+    closestHit.t = numeric_limits<float>::max();
+    
+    const vector<VertexAttrib>& vertices = mesh.getVertexAttributes();
+    const vector<unsigned int>& primitives = mesh.getPrimitives();
+    int primitiveType = mesh.getPrimitiveType();
+    int primitiveSize = mesh.getPrimitiveSize();
+    
+    if (primitiveType != GL_TRIANGLES || primitiveSize != 3) {
+        return closestHit;
+    }
+    
+    for (size_t i = 0; i < primitives.size(); i += 3) {
+        unsigned int idx0 = primitives[i];
+        unsigned int idx1 = primitives[i + 1];
+        unsigned int idx2 = primitives[i + 2];
+        
+        glm::vec3 v0 = vertices[idx0].getPosition();
+        glm::vec3 v1 = vertices[idx1].getPosition();
+        glm::vec3 v2 = vertices[idx2].getPosition();
+        float t, u, v;
+        if (intersectTriangle(rayObject, v0, v1, v2, t, u, v)) {
+            if (t > 0.001f) {
+                float w = 1.0f - u - v;
+                glm::vec3 pointObj = rayObject.at(t);
+                glm::vec3 pointView = glm::vec3(modelview * glm::vec4(pointObj, 1.0f));                
+                float tView = glm::length(pointView - rayView.origin);
+                if (tView < closestHit.t) {
                     glm::vec3 n0 = vertices[idx0].getNormal();
                     glm::vec3 n1 = vertices[idx1].getNormal();
                     glm::vec3 n2 = vertices[idx2].getNormal();
                     glm::vec3 normalObj = w * n0 + u * n1 + v * n2;
-                    glm::vec3 pointObj = rayObject.at(t);
-                    glm::vec3 pointView = glm::vec3(modelview * glm::vec4(pointObj, 1.0f));
-                    glm::vec3 normalView = glm::normalize(glm::vec3(normalMatrix * glm::vec4(normalObj, 0.0f)));
-                    closestHit.setHit(t, pointView, normalView, material);
+                    glm::vec3 normalView = glm::normalize(
+                    glm::vec3(normalMatrix * glm::vec4(normalObj, 0.0f)));
+                    closestHit.setHit(tView, pointView, normalView, material);
                 }
             }
         }
-        return closestHit;
     }
+    return closestHit;
+}
     
     string getName() const { return name; }
 };

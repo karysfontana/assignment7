@@ -46,27 +46,40 @@ class Raytracer {
         if (!hit.isHit()) {
             return glm::vec3(0.0f, 0.0f, 0.0f);
         }
-        glm::vec4 ambient = hit.material.getAmbient();
-        glm::vec4 diffuse = hit.getColor();
-        glm::vec4 specular = hit.material.getSpecular();
+        glm::vec3 matAmbient = glm::vec3(hit.material.getAmbient());
+        glm::vec3 matDiffuse = glm::vec3(hit.getColor());
+        glm::vec3 matSpecular = glm::vec3(hit.material.getSpecular());
         float shininess = hit.material.getShininess();
-        glm::vec3 color = glm::vec3(ambient);        
+        glm::vec3 normal = glm::normalize(hit.normal);
+        glm::vec3 view = glm::normalize(-hit.point);
+        glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
             glm::vec4 lightPos = light->getPosition();
-            glm::vec3 lightDir;
-            if (lightPos.w == 0.0f) {
-                lightDir = glm::normalize(glm::vec3(lightPos));
+            float spotAngle = light->getSpotCutoff();
+            glm::vec3 lightVec;
+            if (spotAngle != 0.0f) {
+                lightVec = glm::normalize(glm::vec3(lightPos) - hit.point);
             } else {
-                lightDir = glm::normalize(glm::vec3(lightPos) - hit.point);
+                lightVec = glm::normalize(-glm::vec3(lightPos));
             }
-            float diffuseFactor = max(glm::dot(hit.normal, lightDir), 0.0f);
-            color += diffuseFactor * glm::vec3(diffuse) * glm::vec3(light->getDiffuse());
-            if (diffuseFactor > 0.0f) {
-                glm::vec3 viewDir = glm::normalize(-hit.point);
-                glm::vec3 reflectDir = glm::reflect(-lightDir, hit.normal);
-                float specFactor = pow(max(glm::dot(viewDir, reflectDir), 0.0f), shininess);
-                color += specFactor * glm::vec3(specular) * glm::vec3(light->getSpecular());
+            float nDotL = glm::dot(normal, lightVec);
+            float spotEffect = 1.0f;
+            if (spotAngle > 0.0f) {
+                glm::vec3 spotDir = glm::normalize(light->getSpotDirection());
+                float spotCos = glm::dot(lightVec, spotDir);
+                if (spotCos >= cos(spotAngle)) {
+                    spotEffect = 0.0f;
+                }
             }
+            glm::vec3 reflect = glm::normalize(glm::reflect(-lightVec, normal));
+            float rDotV = max(glm::dot(reflect, view), 0.0f);            
+            glm::vec3 ambient = matAmbient * glm::vec3(light->getAmbient()) * spotEffect;            
+            glm::vec3 diffuse = matDiffuse * glm::vec3(light->getDiffuse()) * max(nDotL, 0.0f) * spotEffect;            
+            glm::vec3 specular = glm::vec3(0.0f);
+            if (nDotL > 0.0f) {
+                specular = matSpecular * glm::vec3(light->getSpecular()) * pow(rDotV, shininess) * spotEffect;
+            }
+            color += ambient + diffuse + specular;
         }
         return glm::clamp(color, 0.0f, 1.0f);
     }

@@ -1,0 +1,38 @@
+#instances
+instance box models/box-outside.obj
+
+#materials
+material box-material
+ambient 1.0 1.0 1.0
+diffuse 1.0 1.0 1.0
+specular 0.5 0.5 0.5
+shininess 50
+end-material
+
+#lights
+light spotlight
+ambient 1 0.5 0      
+diffuse 1 0.3 0      
+specular 1 0.5 0.3   
+position 0 10 20  
+spot-direction 0 0 -1
+spot-angle 10
+end-light
+
+#textures
+image white textures/white.ppm
+
+#the root
+group root root
+assign-light spotlight root
+
+#single box at origin
+scale b-scale b-scale 5 5 5
+leaf box box instanceof box 
+assign-material box box-material
+assign-texture box white
+
+add-child box b-scale
+add-child b-scale root
+
+assign-root root
