@@ -23,12 +23,15 @@ Below is the thought process behind the design of my program:
 KDTree: I primarily used the assignment page, the raytracer module slides, and the textbook 
 sections 12.3.1 & 12.3.2 (I know it's technically for BSP trees, however, it does give examples 
 (visuals & math) for the spatial dimensional stuff). Thought process is below: 
-- I first started with reading through and then modifying the given files header to support triangle
-    storage and implementation 
-- Once the header files were set up to add triangles, I implemented assigning triangles after reading 
-    primitives (I used a helper method to assign triangles)
-- I read through Andres' RaytraceMesh class again to understand their methods better and made my 
+- I first started with reading through and then modifying the given files header to support
+    triangle storage and implementation 
+- Once the header files were set up to add triangles, I implemented assigning triangles after 
+    reading primitives (I used a helper method to assign triangles)
+- I read through Andres' RaytraceMesh class again to understand their methods better and made my
     implementation plan based on that as well as the explained math in the assignment page and textbook. 
+- I created three public getters so that I could easily access the left and right nodes and the plane 
+- I decided to make a secondary method (intersectNode) to handle the leaf nodes and the four cases 
+    for the internal nodes so I could focus on the Moller-Trumbore in the intersectTriangles method. 
 
 **Issues**
 The technical difficulties I gathered from the Toon Mode and Mipmapping are really strange.
