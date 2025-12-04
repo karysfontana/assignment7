@@ -29,10 +29,21 @@ end-material
 
 #lights
 light one-light
-ambient 0.6 0.6 0.6
+ambient 1.0 1.0 1.0
 diffuse 0.5 0.5 0.5
 specular 0.5 0.5 0.5
-position 0 10 0
+position 10 50 0
+spot-direction 0 -1 0
+spot-angle 60
+end-light
+
+light two-light
+ambient 1.0 1.0 1.0
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5
+position -10 50 0
+spot-direction 0 -1 0
+spot-angle 60
 end-light
 
 #textures
@@ -42,6 +53,7 @@ image checkerboard textures/checkerboard.ppm
 #the root
 group root root
 assign-light one-light root
+assign-light two-light root
 
 #box
 translate b-translate b-translate -10 0 0
@@ -70,7 +82,7 @@ translate s-translate s-translate 10 0 0
 scale s-scale s-scale 5 5 5
 leaf one-sphere one-sphere instanceof sphere 
 assign-material one-sphere sphere-material
-assign-texture one-sphere checkerboard
+assign-texture one-sphere white
 
 add-child one-sphere s-scale
 add-child s-scale s-translate

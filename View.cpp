@@ -240,6 +240,7 @@ void View::display(sgraph::IScenegraph *scenegraph) {
         raytracer->render(rayLights);
         raytracer->saveImage("raytracer.ppm");
         raycast = false;
+        glfwPollEvents();
         return;
     }
     lights.setLights();
