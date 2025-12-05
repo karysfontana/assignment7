@@ -1,8 +1,8 @@
 #ifndef __KDNODE_H__
 #define __KDNODE_H__
 #include <glm/glm.hpp>
-#include "HitRecord.h"
-#include "Ray.h"
+#include "../ray/HitRecord.h"
+#include "../ray/Ray.h"
 #include <unordered_set>
 using namespace std;
 

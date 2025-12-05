@@ -1,31 +1,42 @@
-#ifndef _RAYTRACER_H_
-#define _RAYTRACER_H_
+#ifndef _KDRAYTRACER_H_
+#define _KDRAYTRACER_H_
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "HitRecord.h"
 #include "Ray.h"
-#include "../sgraph/RaycastRenderer.h"
+#include "../sgraph/KDRaycastRenderer.h"
 #include "../sgraph/IScenegraph.h"
+#include "../kd-tree/KDTree.h"
 #include <stack>
 #include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+#include <limits>
 using namespace std;
 
 namespace ray {
-class Raytracer {
+class KDRaytracer {
     public:
-    Raytracer(int w, int h, 
+    KDRaytracer(int w, int h, 
               stack<glm::mat4>& mv,
               map<string, util::PolygonMesh<VertexAttrib>>& meshes,
               sgraph::IScenegraph* sg)
         : width(w), height(h), modelview(mv), scenegraph(sg), fov(60.0f) {
         image.resize(width * height * 3);
-        renderer = new sgraph::RaycastRenderer(mv, meshes);
+        renderer = new sgraph::KDRaycastRenderer(mv, meshes);
+        for (auto& pair : meshes) {
+            kdTrees[pair.first] = new KDTree(pair.second);
+        }
     }
     
-    ~Raytracer() {
+    ~KDRaytracer() {
         delete renderer;
+        for (auto& pair : kdTrees) {
+            delete pair.second;
+        }
     }
     
     void setTextureImages(map<string, unsigned int> texImages) {
@@ -42,22 +53,22 @@ class Raytracer {
         return Ray(origin, direction);
     }
 
-    // bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
-    //     glm::vec3 direction;
-    //     float max;
-    //     if (light->getSpotCutoff() == 0.0f) {
-    //         glm::vec3 position = glm::vec3(light->getPosition()) - point;
-    //         max = glm::length(position);    
-    //         direction = position / max;
-    //     } else {
-    //         direction = glm::normalize(-glm::vec3(light->getSpotDirection()));
-    //         max = std::numeric_limits<float>::max();
-    //     }        
-    //     glm::vec3 shadow = point + normal * 0.001f;
-    //     Ray shadowRay(shadow, direction);
-    //     HitRecord shadowHit = castRay(shadowRay);        
-    //     return shadowHit.isHit() && glm::length(shadowHit.point - shadow) < max;
-    // }
+    bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
+        glm::vec3 direction;
+        float max;
+        if (light->getSpotCutoff() == 0.0f) {
+            glm::vec3 position = glm::vec3(light->getPosition()) - point;
+            max = glm::length(position);    
+            direction = position / max;
+        } else {
+            direction = glm::normalize(-glm::vec3(light->getSpotDirection()));
+            max = std::numeric_limits<float>::max();
+        }        
+        glm::vec3 shadow = point + normal * 0.001f;
+        Ray shadowRay(shadow, direction);
+        HitRecord shadowHit = castRay(shadowRay);        
+        return shadowHit.isHit() && glm::length(shadowHit.point - shadow) < max;
+    }
     
     glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights) {
         if (!hit.isHit()) {
@@ -71,9 +82,9 @@ class Raytracer {
         glm::vec3 view = glm::normalize(-hit.point);
         glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
-            // if (inShadow(hit.point, normal, light)) {
-            //     continue; 
-            // }
+            if (inShadow(hit.point, normal, light)) {
+                continue; 
+            }
             glm::vec4 lightPos = light->getPosition();
             float spotAngle = light->getSpotCutoff();
             glm::vec3 lightVec;
@@ -109,12 +120,32 @@ class Raytracer {
         scenegraph->getRoot()->accept(renderer);
         return renderer->getClosestHit();
     }
+
+    HitRecord intersectMesh(const string& meshName, Ray& objectRay, Ray& viewRay, const glm::mat4& normalMatrix) {
+        auto it = kdTrees.find(meshName);
+        if (it != kdTrees.end()) {
+            return it->second->intersect(objectRay, viewRay, normalMatrix);
+        }
+        return HitRecord();
+    }
+    
+    KDTree* getKDTree(const string& meshName) {
+        auto it = kdTrees.find(meshName);
+        if (it != kdTrees.end()) {
+            return it->second;
+        }
+        return nullptr;
+    }
     
     void render(const vector<util::Light*>& lights) {
+        int hitcount = 0;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 Ray ray = generateRay(i, j);
                 HitRecord hit = castRay(ray);
+                if (hit.isHit()) {
+                    hitcount++;
+                }
                 glm::vec3 color = computeColor(hit, lights);
                 int id = 3 * (j * width + i);
                 image[id] = (unsigned char)(color.r * 255);
@@ -122,6 +153,7 @@ class Raytracer {
                 image[id + 2] = (unsigned char)(color.b * 255);
             }
         }
+        std::cout << "Total hits: " << hitcount << " out of " << (width * height) << " rays" << std::endl;
     }
     
     void saveImage(const string& filename) {
@@ -143,8 +175,9 @@ class Raytracer {
         int width, height;
         vector<unsigned char> image;
         stack<glm::mat4>& modelview;
-        sgraph::RaycastRenderer* renderer;
+        sgraph::KDRaycastRenderer* renderer;
         sgraph::IScenegraph* scenegraph;
+        map<string, KDTree*> kdTrees;
         float fov;
     };
 }

@@ -10,16 +10,19 @@ using namespace std;
 #include "VertexAttrib.h"
 #include "PolygonMesh.h"
 #include <glm/glm.hpp>
+#include "../ray/Ray.h"
+#include "../ray/HitRecord.h"
 
 class KDTree {
     friend class KDInternalNode;
     friend class KDAbstractNode;
+    friend class KDLeafNode;
     public:
     KDTree(util::PolygonMesh<VertexAttrib>& mesh);
 
     ~KDTree();
 
-    virtual HitRecord intersect(Ray& objectRay,Ray& viewRay,glm::mat4 normalMatrix);
+    virtual ray::HitRecord intersect(ray::Ray& objectRay, ray::Ray& viewRay,glm::mat4 normalMatrix);
 
     // Helper method to assign triangles 
     void assignTrianglesToNode(KDNode* node, const vector<int>& triangleIDs); 
@@ -27,11 +30,11 @@ class KDTree {
     private:
     KDNode *buildKDTree(int maxPointsPerLeaf);
     KDNode *buildKDTree(vector<int>& sortedByX,vector<int>& sortedByY,vector<int>& sortedByZ,int maxPointsPerLeaf,int depth);
-    bool intersect_bounding_box(Ray& objectRay,float *min_t,float *max_t);
+    bool intersect_bounding_box(ray::Ray& objectRay,float *min_t,float *max_t);
     // Helper method to check for intersection with one ray. 
-    HitRecord intersectTriangle(const Ray&ray, const glm::ivec3& tri); 
+    ray::HitRecord intersectTriangle(const ray::Ray& ray, const glm::ivec3& tri); 
     // Recursive traversal for intersections of internal nodes. 
-    HitRecord intersectNode(KDNode* node, const ray::Ray& ray, float tmin, float tmax); 
+    ray::HitRecord intersectNode(KDNode* node, const ray::Ray& ray, float tmin, float tmax); 
     
 
     private:

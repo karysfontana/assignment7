@@ -1,4 +1,4 @@
-OBJS = Hogwarts.o View.o Controller.o Model.o
+OBJS = Hogwarts.o View.o Controller.o Model.o KDTree.o KDInternalNode.o KDAbstractNode.o
 INCLUDES = -I../include
 LIBS = -L../lib
 LDFLAGS = -lglad -lglfw3
@@ -28,6 +28,15 @@ Controller.o: Controller.cpp Controller.h
 
 Model.o: Model.cpp Model.h
 	$(COMPILER) $(INCLUDES) $(CFLAGS) -c Model.cpp		
+
+KDTree.o: kd-tree/KDTree.cpp kd-tree/KDTree.h
+	$(COMPILER) $(INCLUDES) $(CFLAGS) -c kd-tree/KDTree.cpp -o KDTree.o
+
+KDInternalNode.o: kd-tree/KDInternalNode.cpp kd-tree/KDInternalNode.h
+	$(COMPILER) $(INCLUDES) $(CFLAGS) -c kd-tree/KDInternalNode.cpp -o KDInternalNode.o
+
+KDAbstractNode.o: kd-tree/KDAbstractNode.cpp kd-tree/KDAbstractNode.h
+	$(COMPILER) $(INCLUDES) $(CFLAGS) -c kd-tree/KDAbstractNode.cpp -o KDAbstractNode.o
 	
 RM = rm	-f
 RM := del

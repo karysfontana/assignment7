@@ -11,6 +11,11 @@ class KDAbstractNode: public KDNode {
     virtual ~KDAbstractNode() {
         
     }
+
+    // Triangle indices 
+    vector<int> triangleIndices; 
+    vector<int> indices; //vertex indices
+
     protected:
     KDAbstractNode(vector<glm::vec3> *listOfPoints, vector<glm::vec3> *listOfNormals, vector<int> indices, KDTree *t);
 
@@ -20,9 +25,6 @@ class KDAbstractNode: public KDNode {
     
     vector<glm::vec3> *listOfPoints;
     vector<glm::vec3> *listOfNormals;
-    vector<int> indices; //vertex indices
-    // Triangle indices 
-    vector<int> triangleIndices; 
 };
 
 #endif

@@ -3,7 +3,6 @@
 
 #include <glm/glm.hpp>
 #include "Material.h"
-#include "TextureImage.h"
 #include <limits>
 using namespace std;
 
