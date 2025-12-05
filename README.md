@@ -57,6 +57,9 @@ manual assignment does not seem to fix this. This is causing the ray to not hit 
 As such, we left the KDTree implementation in, but chose to not use our KD raytracer renderer for our 
 submission images so we could turn in on time. 
 
+**SIDE NOTE**
+We accidentally put the shadows on our to-do list because we thought they were for this assignment. 
+We commented out the implementation. But, if it's possible we would appreciate some feedback on it. 
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
 Checkerboard.ppm - I took it from the example LightsAndTextures from class.
