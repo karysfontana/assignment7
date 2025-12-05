@@ -53,6 +53,8 @@ texture. So while mipmapping works, the textures themself are off.
 When P and Q are close to the split plane, there is an issue with checking the triangles. 
 It seems as though the triangle indices for the left and right are not actually in lists, however, 
 manual assignment does not seem to fix this. This is causing the ray to not hit all the internal nodes. 
+As such, we left the KDTree implementation in, but chose to not use our KD raytracer renderer for our 
+submission images so we could turn in on time. 
 
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
