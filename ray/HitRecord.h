@@ -17,6 +17,7 @@ public:
     
     HitRecord() : t(numeric_limits<float>::max()), hit(false) {}
     
+    // Set hit information
     void setHit(float t, const glm::vec3& point, const glm::vec3& normal, 
                 const util::Material& material) {
         this->t = t;
@@ -26,13 +27,16 @@ public:
         this->hit = true;
     }
     
+    // Check if there was a hit
     bool isHit() const { return hit; }
     
+    // Reset the hit record
     void clear() {
         hit = false;
         t = numeric_limits<float>::max();
     }
     
+    // Get the color at the hit point
     glm::vec4 getColor() const {
         return material.getDiffuse();
     }

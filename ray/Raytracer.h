@@ -32,6 +32,7 @@ class Raytracer {
         renderer->setTextureMap(texImages);
     }
     
+    // generate a ray for current pixel
     Ray generateRay(int i, int j) {
         float aspect = (float)width / height;
         float tanFov = tan(glm::radians(fov / 2.0f));        
@@ -59,6 +60,8 @@ class Raytracer {
     //     return shadowHit.isHit() && glm::length(shadowHit.point - shadow) < max;
     // }
     
+    // Compute color at the hit point using the phong-multiple shader as a base.
+    // Commented out shadow checking since that's Assignment 8.
     glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights) {
         if (!hit.isHit()) {
             return glm::vec3(0.0f, 0.0f, 0.0f);
@@ -104,12 +107,14 @@ class Raytracer {
         return glm::clamp(color, 0.0f, 1.0f);
     }
     
+    //cast a ray into the scenegraph.
     HitRecord castRay(const Ray& ray) {
         renderer->setRay(ray);
         scenegraph->getRoot()->accept(renderer);
         return renderer->getClosestHit();
     }
     
+    //renders the scenegraph.
     void render(const vector<util::Light*>& lights) {
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
@@ -124,6 +129,7 @@ class Raytracer {
         }
     }
     
+    //saves the image to a PPM file.
     void saveImage(const string& filename) {
         FILE* fp = fopen(filename.c_str(), "w"); 
         if (!fp) {

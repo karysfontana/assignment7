@@ -120,22 +120,6 @@ class KDRaytracer {
         scenegraph->getRoot()->accept(renderer);
         return renderer->getClosestHit();
     }
-
-    HitRecord intersectMesh(const string& meshName, Ray& objectRay, Ray& viewRay, const glm::mat4& normalMatrix) {
-        auto it = kdTrees.find(meshName);
-        if (it != kdTrees.end()) {
-            return it->second->intersect(objectRay, viewRay, normalMatrix);
-        }
-        return HitRecord();
-    }
-    
-    KDTree* getKDTree(const string& meshName) {
-        auto it = kdTrees.find(meshName);
-        if (it != kdTrees.end()) {
-            return it->second;
-        }
-        return nullptr;
-    }
     
     void render(const vector<util::Light*>& lights) {
         int hitcount = 0;

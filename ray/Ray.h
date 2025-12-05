@@ -14,6 +14,7 @@ namespace ray {
             Ray(const glm::vec3& origin, const glm::vec3& direction) 
                 : origin(origin), direction(glm::normalize(direction)) {}
     
+            // Gets point along the ray.
             glm::vec3 at(float t) const {
                 return origin + direction * t;
             }

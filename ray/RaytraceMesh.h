@@ -20,6 +20,7 @@ private:
     util::PolygonMesh<VertexAttrib> mesh;
     string name;
     
+    // Moller–Trumbore intersection algorithm
     bool checkIntersect(const Ray& ray, 
                           const glm::vec3& v0, 
                           const glm::vec3& v1, 
@@ -55,6 +56,7 @@ public:
         RaytraceMesh(const string& name, const util::PolygonMesh<VertexAttrib>& mesh)
             : name(name), mesh(mesh) {}
 
+        // Perform ray-mesh intersection
         HitRecord intersect(const Ray& rayObject, 
                     const Ray& rayView,
                     const glm::mat4& mv,
