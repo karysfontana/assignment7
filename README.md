@@ -49,6 +49,11 @@ when I rendered with just the texture. The reason this happened is also unknown.
 to see this one is by looking at object 1. It's slightly darker. That is the checkerboard
 texture. So while mipmapping works, the textures themself are off.
 
+- Precision Error in KDTree Traversal for hits. 
+When P and Q are close to the split plane, there is an issue with checking the triangles. 
+It seems as though the triangle indices for the left and right are not actually in lists, however, 
+manual assignment does not seem to fix this. This is causing the ray to not hit all the internal nodes. 
+
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
 Checkerboard.ppm - I took it from the example LightsAndTextures from class.
