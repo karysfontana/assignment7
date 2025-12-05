@@ -12,6 +12,7 @@
 - pressing S will enter you into Toon mode, where it uses cel-rendering
 - The lighting system works as expected with two different spotlights and two positioned lights
 - The Textures work work as expected also
+- KDTree partially works, however internal nodes don't properly render. To use it, switch the Raytracer in View for the KDRayTracer, as that's where it's KDTree is implemented. 
 
 **Implementation Details.**
 I used Assignment 5 as a starting point since it had the scenegraph implementation
