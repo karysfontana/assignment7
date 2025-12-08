@@ -43,29 +43,26 @@ class Raytracer {
         return Ray(origin, direction);
     }
 
-    // bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
-    //     glm::vec3 direction;
-    //     float max;
-    //     if (light->getSpotCutoff() == 0.0f) {
-    //         glm::vec3 position = glm::vec3(light->getPosition()) - point;
-    //         max = glm::length(position);    
-    //         direction = position / max;
-    //     } else {
-    //         direction = glm::normalize(-glm::vec3(light->getSpotDirection()));
-    //         max = std::numeric_limits<float>::max();
-    //     }        
-    //     glm::vec3 shadow = point + normal * 0.001f;
-    //     Ray shadowRay(shadow, direction);
-    //     HitRecord shadowHit = castRay(shadowRay);        
-    //     return shadowHit.isHit() && glm::length(shadowHit.point - shadow) < max;
-    // }
+    bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
+        glm::vec3 direction;
+        float max;
+        if (light->getSpotCutoff() == 0.0f) {
+            glm::vec3 position = glm::vec3(light->getPosition()) - point;
+            max = glm::length(position);    
+            direction = position / max;
+        } else {
+            direction = glm::normalize(-glm::vec3(light->getSpotDirection()));
+            max = std::numeric_limits<float>::max();
+        }        
+        glm::vec3 shadow = point + normal * 0.001f;
+        Ray shadowRay(shadow, direction);
+        HitRecord shadowHit = castRay(shadowRay);        
+        return shadowHit.isHit() && glm::length(shadowHit.point - shadow) < max;
+    }
     
     // Compute color at the hit point using the phong-multiple shader as a base.
     // Commented out shadow checking since that's Assignment 8.
-    glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights) {
-        if (!hit.isHit()) {
-            return glm::vec3(0.0f, 0.0f, 0.0f);
-        }
+    glm::vec3 getBase(const HitRecord& hit, const vector<util::Light*>& lights) {
         glm::vec3 matAmbient = glm::vec3(hit.material.getAmbient());
         glm::vec3 matDiffuse = glm::vec3(hit.getColor());
         glm::vec3 matSpecular = glm::vec3(hit.material.getSpecular());
@@ -74,9 +71,9 @@ class Raytracer {
         glm::vec3 view = glm::normalize(-hit.point);
         glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
-            // if (inShadow(hit.point, normal, light)) {
-            //     continue; 
-            // }
+            if (inShadow(hit.point, normal, light)) {
+                continue; 
+            }
             glm::vec4 lightPos = light->getPosition();
             float spotAngle = light->getSpotCutoff();
             glm::vec3 lightVec;
@@ -104,6 +101,27 @@ class Raytracer {
             }
             color += ambient + diffuse + specular;
         }
+        return glm::clamp(color, 0.0f, 1.0f);
+    }
+
+    glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights, int bounces = 0) {
+        if (!hit.isHit() || bounces >= 5) {
+            return glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+        float absorption = hit.material.getAbsorption();
+        float reflect = hit.material.getReflection();        
+        glm::vec3 baseColor = getBase(hit, lights);        
+        if (reflect == 0.0f) {
+            return glm::clamp(baseColor, 0.0f, 1.0f);
+        }        
+        glm::vec3 normal = glm::normalize(hit.normal);
+        glm::vec3 view = glm::normalize(hit.point);
+        glm::vec3 direction = glm::reflect(view, normal);        
+        glm::vec3 origin = hit.point + normal * 0.001f;
+        Ray reflection(origin, direction);        
+        HitRecord reflectHit = castRay(reflection);        
+        glm::vec3 reflectColor = computeColor(reflectHit, lights, bounces + 1);        
+        glm::vec3 color = absorption * baseColor + reflect * reflectColor;
         return glm::clamp(color, 0.0f, 1.0f);
     }
     

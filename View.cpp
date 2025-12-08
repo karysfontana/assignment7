@@ -205,10 +205,9 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
 	projection = glm::perspective(glm::radians(60.0f),(float)window_width/window_height,0.1f,10000.0f);
     glViewport(0, 0, window_width,window_height);
     renderer = new sgraph::GLScenegraphRenderer(modelview,objects,shaderLocations);    
-    raytracer = new ray::Raytracer(200, 200, modelview, meshes, scenegraph);
+    raytracer = new ray::Raytracer(100, 100, modelview, meshes, scenegraph);
 }
 
-//Camera Mode 4 is handled here. Using the inverse of the renderer's animation to follow the plane.
 void View::display(sgraph::IScenegraph *scenegraph) {
     program.enable();
     glClearColor(0,0,0,1);

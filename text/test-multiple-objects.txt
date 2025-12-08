@@ -9,6 +9,8 @@ ambient 0.3 0.3 0.3
 diffuse 0.8 0.8 0.8
 specular 0.8 0.8 0.8
 shininess 100
+absorbtion 0.8
+reflection 0.2
 end-material
 
 material box2-material
@@ -17,6 +19,8 @@ ambient 0 0.3 0.3
 diffuse 0 0.8 0.8
 specular 0 0.8 0.8
 shininess 100
+absorbtion 0.8
+reflection 0.2
 end-material
 
 material sphere-material
@@ -25,6 +29,8 @@ ambient 0.3 0.3 0
 diffuse 0.8 0.8 0
 specular 0.8 0.8 0
 shininess 50
+absorbtion 0.8
+reflection 0.2
 end-material
 
 #lights

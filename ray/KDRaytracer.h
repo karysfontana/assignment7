@@ -27,9 +27,6 @@ class KDRaytracer {
         : width(w), height(h), modelview(mv), scenegraph(sg), fov(60.0f) {
         image.resize(width * height * 3);
         renderer = new sgraph::KDRaycastRenderer(mv, meshes);
-        for (auto& pair : meshes) {
-            kdTrees[pair.first] = new KDTree(pair.second);
-        }
     }
     
     ~KDRaytracer() {
