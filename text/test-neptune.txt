@@ -1,0 +1,87 @@
+#all the instances
+instance box models/box-outside.obj
+instance neptune models/neptune.obj
+
+#materials 
+material box-material 
+emission 0 0 0 
+ambient 0.3 0.25 0.2
+diffuse 0.9 0.85 0.7 
+specular 0.8 0.8 0.8 
+shininess 100
+absorbtion 0.8 
+reflection 0.2
+end-material 
+
+material neptune-material 
+emission 0 0 0 
+ambient 0.2 0.3 0.5 
+diffuse 0.3 0.5 0.8 
+specular 0.7 0.7 0.9 
+shininess 120 
+absorbtion 0.7 
+reflection 0.4 
+end-material 
+
+#lights 
+light main-light 
+ambient 0.8 0.8 0.8 
+diffuse 0.7 0.7 0.7 
+specular 0.7 0.7 0.7 
+position 5 55 10 
+spot-direction -0.27 -0.91 -0.22
+spot-angle 45 
+end-light 
+
+light secondary-light 
+ambient 0.6 0.6 0.6 
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5 
+position -5 45 10
+spot-direction 0.37 -0.95 -0.6
+spot-angle 60
+end-light 
+
+#textures
+image white textures/white.ppm 
+image checkerboard textures/checkerboard.ppm
+
+#the root 
+group root root 
+assign-light main-light root 
+assign-light secondary-light root
+
+#ground box 
+translate ground-translate ground-translate 0 -30 0 
+scale ground-scale ground-scale 100 5 100 
+leaf ground-box ground-box instanceof box 
+assign-material ground-box box-material 
+assign-texture ground-box white
+
+add-child ground-box ground-scale 
+add-child ground-scale ground-translate
+add-child ground-translate root 
+
+#neptune 
+translate neptune-translate neptune-translate 2.5 -8 10
+scale neptune-scale neptune-scale 0.05 0.05 0.05
+leaf neptune neptune instanceof neptune 
+assign-material neptune neptune-material 
+assign-texture neptune white 
+
+add-child neptune neptune-scale 
+add-child neptune-scale neptune-translate
+add-child neptune-translate root 
+
+#back box
+translate back-translate back-translate 0 -30 -50
+scale back-scale back-scale 100 100 5
+leaf back-box back-box instanceof box
+assign-material back-box box-material 
+assign-texture back-box white 
+
+add-child back-box back-scale 
+add-child back-scale back-translate 
+add-child back-translate root 
+
+assign-root root 

@@ -271,4 +271,15 @@ add-child roof1 roof1-scale
 add-child roof1-scale roof1-translate 
 add-child roof1-translate root
 
+#back box
+translate back-translate back-translate 0 0 -50
+scale back-scale back-scale 100 60 5
+leaf back-box back-box instanceof box
+assign-material back-box sphere-material 
+assign-texture back-box white 
+
+add-child back-box back-scale 
+add-child back-scale back-translate 
+add-child back-translate root 
+
 assign-root root 
