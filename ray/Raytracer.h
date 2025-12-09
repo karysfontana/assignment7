@@ -43,6 +43,7 @@ class Raytracer {
         return Ray(origin, direction);
     }
 
+    // Determines if a given hit point is in shadow.
     bool inShadow(const glm::vec3& point, const glm::vec3& normal, const util::Light* light) {
         glm::vec3 direction;
         float max;
@@ -61,7 +62,6 @@ class Raytracer {
     }
     
     // Compute color at the hit point using the phong-multiple shader as a base.
-    // Commented out shadow checking since that's Assignment 8.
     glm::vec3 getBase(const HitRecord& hit, const vector<util::Light*>& lights) {
         glm::vec3 matAmbient = glm::vec3(hit.material.getAmbient());
         glm::vec3 matDiffuse = glm::vec3(hit.getColor());
@@ -104,24 +104,61 @@ class Raytracer {
         return glm::clamp(color, 0.0f, 1.0f);
     }
 
-    glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights, int bounces = 0) {
+    //computes refraction direction using Snell's law.
+    bool computeRefraction(const glm::vec3& incident, const glm::vec3& normal, 
+                           float n1, float n2, glm::vec3& refracted) {
+        float eta = n1 / n2;
+        float cosI = -glm::dot(incident, normal);
+        float sin2T = eta * eta * (1.0f - cosI * cosI);
+        if (sin2T > 1.0f) return false;
+        refracted = glm::normalize(eta * incident + (eta * cosI - sqrt(1.0f - sin2T)) * normal);
+        return true;
+    }
+
+    //computes the color at the hit point including reflections and refractions.
+    glm::vec3 computeColor(const HitRecord& hit, const vector<util::Light*>& lights, int bounces = 0, float curr = 1.0f) {
         if (!hit.isHit() || bounces >= 5) {
             return glm::vec3(0.0f, 0.0f, 0.0f);
         }
         float absorption = hit.material.getAbsorption();
-        float reflect = hit.material.getReflection();        
+        float reflect = hit.material.getReflection();
+        float transparency = hit.material.getTransparency();
+        float refractIndex = hit.material.getRefractiveIndex();        
         glm::vec3 baseColor = getBase(hit, lights);        
-        if (reflect == 0.0f) {
+        if (reflect == 0.0f && transparency == 0.0f) {
             return glm::clamp(baseColor, 0.0f, 1.0f);
-        }        
+        }
         glm::vec3 normal = glm::normalize(hit.normal);
         glm::vec3 view = glm::normalize(hit.point);
-        glm::vec3 direction = glm::reflect(view, normal);        
-        glm::vec3 origin = hit.point + normal * 0.001f;
-        Ray reflection(origin, direction);        
-        HitRecord reflectHit = castRay(reflection);        
-        glm::vec3 reflectColor = computeColor(reflectHit, lights, bounces + 1);        
-        glm::vec3 color = absorption * baseColor + reflect * reflectColor;
+        bool enter = glm::dot(view, normal) < 0.0f;
+        normal = enter ? normal : -normal;
+        glm::vec3 color = baseColor * absorption;
+        if (reflect > 0.0f) {
+            glm::vec3 direction = glm::reflect(view, normal);        
+            glm::vec3 origin = hit.point + normal * 0.001f;
+            Ray reflection(origin, direction);        
+            HitRecord reflectHit = castRay(reflection);        
+            glm::vec3 reflectColor = computeColor(reflectHit, lights, bounces + 1, curr);  
+            color +=  reflect * reflectColor;
+        }      
+        if (transparency > 0.0f) {
+            glm::vec3 refractDir;
+            float n1 = enter ? curr : refractIndex;
+            float n2 = enter ? refractIndex : 1.0f;
+            if (computeRefraction(view, normal, n1, n2, refractDir)) {
+                glm::vec3 origin = hit.point - normal * 0.001f;
+                Ray refraction(origin, refractDir);
+                HitRecord refractHit = castRay(refraction);
+                float next = entering ? refractIndex : 1.0f;
+                color += transparency * computeColor(refractHit, lights, bounces + 1, next);
+            } else {
+                glm::vec3 direction = glm::reflect(view, n);
+                glm::vec3 origin = hit.point + normal * 0.001f;
+                Ray reflection(origin, direction);
+                HitRecord reflectHit = castRay(reflection);
+                color += transparency * computeColor(reflectHit, lights, bounces + 1, curr);
+            }
+        }
         return glm::clamp(color, 0.0f, 1.0f);
     }
     
