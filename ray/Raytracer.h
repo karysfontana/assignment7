@@ -7,6 +7,7 @@
 #include "HitRecord.h"
 #include "Ray.h"
 #include "../sgraph/RaycastRenderer.h"
+#include "../sgraph/OldRaycastRenderer.h"
 #include "../sgraph/IScenegraph.h"
 #include <stack>
 #include <iostream>
@@ -72,6 +73,7 @@ class Raytracer {
         glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
             if (inShadow(hit.point, normal, light)) {
+                color += matAmbient * glm::vec3(light->getAmbient());
                 continue; 
             }
             glm::vec4 lightPos = light->getPosition();
@@ -149,10 +151,10 @@ class Raytracer {
                 glm::vec3 origin = hit.point - normal * 0.001f;
                 Ray refraction(origin, refractDir);
                 HitRecord refractHit = castRay(refraction);
-                float next = entering ? refractIndex : 1.0f;
+                float next = enter ? refractIndex : 1.0f;
                 color += transparency * computeColor(refractHit, lights, bounces + 1, next);
             } else {
-                glm::vec3 direction = glm::reflect(view, n);
+                glm::vec3 direction = glm::reflect(view, normal);
                 glm::vec3 origin = hit.point + normal * 0.001f;
                 Ray reflection(origin, direction);
                 HitRecord reflectHit = castRay(reflection);

@@ -1,0 +1,10 @@
+Controller.o
+Hogwarts.exe
+Hogwarts.o
+KDAbstractNode.o
+KDInternalNode.o
+KDTree.o
+Model.o
+View.o
+raytracer.ppm
+OldRaycastRenderer.h
