@@ -261,8 +261,8 @@ add-child column4-scale column4-translate
 add-child column4-translate root 
 
 #roof cone 
-translate roof1-translate roof1-translate 0 34 0 
-scale roof1-scale roof1-scale 68 34 68
+translate roof1-translate roof1-translate 0 35 0 
+scale roof1-scale roof1-scale 70 34 70
 leaf roof1 roof1 instanceof cone 
 assign-material roof1 cone-material 
 assign-texture roof1 white

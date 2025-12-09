@@ -1,4 +1,4 @@
-# assignment7
+# assignment8 
 
 **Features**
 - Upon starting, you show the model passed in as a .txt file and the text hierarchy in terminal.
@@ -37,6 +37,19 @@ For optimization: Andres and I spoke about how to use the bounding box method fo
 - I set both tmin & tmax to infinity in intersect_bounding_box to infinity so that the values could be 
     found to traverse the tree. 
 - I changed the given intersect method (again) so that it checks if the ray misses the box BEFORE traversing. 
+
+**Extra Credit**
+Scene: For the extra credit scene I wanted to use the neptune model that's in ObjViewer. So, I planned the entire scene around the single neptune model (I was absolutely deadset on using it as the complex model) 
+- I physically drew out a mausoleum/temple to house the neptune object as a statue to start. I prefer to do this because it gives me a base for how everything should look together (it's great for visualization and confirmed that my ideal scene was over the required 15 objects). 
+- After, I started to define materials, I wanted to use beiege and grey tones for the temple itself, but keep neptune as a stand-out figure with its color. This took a couple of tries to get the look I was hoping for. 
+- I then started with defining a base for the temple, then a pedestal for the neptune statue. 
+- For the pedestal I really wanted it to look like an actual pedestal you'd find in a Roman temple, despite using primitive shapes. To do that, I made use a box as a base for the pedestal as a whole and then put 4 spheres ontop of the box base. I chose to use 4 spheres because I thought (and still think) it's reminiscent of the detailing between the base of a pedestal and the platform where a statue stands in a Roman temple. Finally, for the top of a pedestal, I used a flat cylinder to give the pedestal as a whole a round-ish shape (emphasis on ish) to mimic the taper effect actual pedestals have. 
+- After I placed the neptune object ontop of the pedestal (which took a lot of fine-tuning in regards to scale and translations), I moved onto modeling the actual temple structure. 
+- For the structure of the temple itself I continued to mimic Roman architecture. This meant creating 4 columns for the temple. I made a box base for each column, then placed a cylinder (scaled to be very tall) on top of the box base. I think that this effectively created a column for each corner, despite having primitive shapes. 
+- Finally, for the roof of the temple, I used a very stretched out cone. I had initially planned to use a box base for the roof and then a cone on top, but that ended up looking ugly, so I used only the cone instead. I didn't use the box alone because it wouldn't look like a Roman temple without a tapered roof. 
+- This scene ended up being made up of 18 objects in total: 6 box objects, 5 cylinder objects, 4 sphere objects, 1 cone object, and 1 neptune object. 
+
+
 **Issues**
 The technical difficulties I gathered from the Toon Mode and Mipmapping are really strange.
 I do apologize for their faulty implementation, but they are working to an extent:
