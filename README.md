@@ -2,8 +2,7 @@
 
 **Features**
 - Upon starting, you show the model passed in as a .txt file and the text hierarchy in terminal.
-- pressing S will cause a raytracer to run on the scene. The calculations take into account shadows, reflections,
-and shading. 
+- pressing S will cause a raytracer to run on the scene. The calculations take into account shadows, reflections, and shading. 
 - KDTree's allow for efficient raytracing.
 
 **Implementation Details.**
@@ -29,6 +28,8 @@ Scene: For the extra credit scene I wanted to use the neptune model that's in Ob
 - For the structure of the temple itself I continued to mimic Roman architecture. This meant creating 4 columns for the temple. I made a box base for each column, then placed a cylinder (scaled to be very tall) on top of the box base. I think that this effectively created a column for each corner, despite having primitive shapes. 
 - Finally, for the roof of the temple, I used a very stretched out cone. I had initially planned to use a box base for the roof and then a cone on top, but that ended up looking ugly, so I used only the cone instead. I didn't use the box alone because it wouldn't look like a Roman temple without a tapered roof. 
 - This scene ended up being made up of 18 objects in total: 6 box objects, 5 cylinder objects, 4 sphere objects, 1 cone object, and 1 neptune object. 
+- I avoided giving the model a back object because it would ruin the temple look of the model. 
+- I had the point lights pointed at neptunes statue, which took some editing due to the cone roof, however, I think they look good and create a good shadow of neptune. 
 
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
