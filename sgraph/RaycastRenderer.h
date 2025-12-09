@@ -1,5 +1,5 @@
-#ifndef _RAYCASTRENDERER_H_
-#define _RAYCASTRENDERER_H_
+#ifndef _KDRAYCASTRENDERER_H_
+#define _KDRAYCASTRENDERER_H_
 
 #include "SGNodeVisitor.h"
 #include "GroupNode.h"
@@ -9,7 +9,7 @@
 #include "RotateTransform.h"
 #include "TranslateTransform.h"
 #include "AnimationTransform.h"
-#include "../ray/RaytraceMesh.h"
+#include "../kd-tree/KDTree.h"
 #include "../ray/HitRecord.h"
 #include "../ray/Ray.h"
 #include "PolygonMesh.h"
@@ -25,7 +25,7 @@ using namespace std;
 namespace sgraph {
 /**
  * Raycaster renderer that traverses the scene graph and performs ray-triangle
- * intersection tests. Follows the visitor pattern like GLScenegraphRenderer.
+ * intersection tests using KD-trees for acceleration.
  */
 class RaycastRenderer : public SGNodeVisitor {
 public:
@@ -33,12 +33,12 @@ public:
                    map<string, util::PolygonMesh<VertexAttrib>>& meshes)
         : modelview(mv), tick(0), animationTransform(glm::mat4(1.0f)) {
         for (auto& pair : meshes) {
-            raytraceMeshes[pair.first] = new ray::RaytraceMesh(pair.first, pair.second);
+            kdTrees[pair.first] = new KDTree(pair.second);
         }
     }
     
     ~RaycastRenderer() {
-        for (auto& pair : raytraceMeshes) {
+        for (auto& pair : kdTrees) {
             delete pair.second;
         }
     }
@@ -60,23 +60,27 @@ public:
     
     void visitLeafNode(LeafNode *node) {
         string meshName = node->getInstanceOf();
-        if (raytraceMeshes.find(meshName) == raytraceMeshes.end()) {
+        auto it = kdTrees.find(meshName);
+        if (it == kdTrees.end()) {
             return;
-        }
-        glm::mat4 inverse = glm::inverse(modelview.top());
-        glm::mat4 normal = glm::transpose(inverse);
-        glm::vec3 origin = glm::vec3(inverse * glm::vec4(current.origin, 1.0f));
-        glm::vec3 direction = glm::normalize(glm::vec3(inverse * glm::vec4(current.direction, 0.0f)));
-        ray::Ray newRay(origin, direction);
-        ray::HitRecord hit = raytraceMeshes[meshName]->intersect(
-            newRay, 
-            current, 
-            modelview.top(), 
-            normal,
-            node->getMaterial()
-        );
-        if (hit.isHit() && hit.t < closest.t) {
-            closest = hit;
+        }        
+        glm::mat4 currentMV = modelview.top();
+        glm::mat4 inverseModel = glm::inverse(currentMV);        
+        glm::mat4 normalMatrix = glm::transpose(inverseModel);        
+        glm::vec3 origin = glm::vec3(inverseModel * glm::vec4(current.origin, 1.0f));
+        glm::vec3 direction = glm::normalize(glm::vec3(inverseModel * glm::vec4(current.direction, 0.0f)));
+        ray::Ray objectRay(origin, direction);        
+        ray::HitRecord hit = it->second->intersect(objectRay, current, normalMatrix);
+        if (hit.isHit()) {
+            glm::vec4 worldPoint = currentMV * glm::vec4(hit.point, 1.0f);
+            hit.point = glm::vec3(worldPoint);
+            glm::mat3 normalMat3 = glm::mat3(glm::transpose(inverseModel));
+            hit.normal = glm::normalize(normalMat3 * hit.normal);            
+            hit.t = glm::length(hit.point - current.origin);            
+            hit.material = node->getMaterial();            
+            if (hit.t < closest.t) {
+                closest = hit;
+            }
         }
     }
     
@@ -127,7 +131,7 @@ private:
     stack<glm::mat4>& modelview;
     ray::Ray current;
     ray::HitRecord closest;
-    map<string, ray::RaytraceMesh*> raytraceMeshes;
+    map<string, KDTree*> kdTrees;
     map<string, unsigned int> ids;
     int tick;
     glm::mat4 animationTransform;

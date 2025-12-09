@@ -13,7 +13,6 @@
 #include "PolygonMesh.h"
 #include "VertexAttrib.h"
 #include "ray/Raytracer.h"
-#include "ray/KDRaytracer.h"
 #include "sgraph/IScenegraph.h"
 
 #include <stack>

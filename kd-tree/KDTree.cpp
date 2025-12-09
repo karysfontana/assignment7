@@ -253,8 +253,16 @@ void KDTree::assignTrianglesToNode(KDNode* n, const vector<int>& triangleList)
             internal->triangleIndices.push_back(tID);
         }
     }
-    assignTrianglesToNode(internal->getLeft(), leftList); 
-    assignTrianglesToNode(internal->getRight(), rightList); 
+    if (internal->getLeft())
+        assignTrianglesToNode(internal->getLeft(), leftList);
+    else
+        internal->triangleIndices.insert(internal->triangleIndices.end(), 
+                                      leftList.begin(), leftList.end());
+    if (internal->getRight())
+        assignTrianglesToNode(internal->getRight(), rightList);
+    else
+        internal->triangleIndices.insert(internal->triangleIndices.end(), 
+                                      rightList.begin(), rightList.end());
 }
 /**
  * @brief Method to check for triangle intersections with one ray tracer ray. 
@@ -325,9 +333,11 @@ ray::HitRecord KDTree::intersectTriangle(const ray::Ray&ray, const glm::ivec3& t
  */
 ray::HitRecord KDTree::intersectNode(KDNode* node, const ray::Ray& ray, float tmin, float tmax)
 {
+    ray::HitRecord hit;
+    hit.t = std::numeric_limits<float>::max();
     // Empty hit check 
     if (!node) {
-        return ray::HitRecord(); 
+        return hit; 
     }
     KDLeafNode* leaf = dynamic_cast<KDLeafNode*>(node); 
     // Test all triangles for leaf node, return closest hit. 
@@ -349,7 +359,7 @@ ray::HitRecord KDTree::intersectNode(KDNode* node, const ray::Ray& ray, float tm
     KDInternalNode* internal = dynamic_cast<KDInternalNode*>(node); 
     if (!internal)
     {
-        return ray::HitRecord(); 
+        return hit; 
     }
 
     glm::vec4 plane = internal->getPlane(); 
@@ -389,10 +399,6 @@ ray::HitRecord KDTree::intersectNode(KDNode* node, const ray::Ray& ray, float tm
             second = internal->getLeft();
         }
     }
-    
-    
-    // If P is on plane
-    ray::HitRecord hit; 
 
     // Check ray intersecting plane. 
     float denom = glm::dot(planeNormal, ray.direction); 
@@ -444,17 +450,12 @@ ray::HitRecord KDTree::intersectNode(KDNode* node, const ray::Ray& ray, float tm
     else 
     {
         hit = intersectNode(first, ray, tmin, tmax); 
-
-        // Check plane triangles 
-        if(fabs(distP) < EPSILON)
-        {
-            for (int tID : internal->triangleIndices)
-            {
-                ray::HitRecord planeHit = intersectTriangle(ray, triangles[tID]); 
-                if (planeHit.t >= tmin && planeHit.t <= tmax && planeHit.t < hit.t)
-                    hit = planeHit; 
-            }
-        }
+    }
+     for (int tID : internal->triangleIndices)
+    {
+        ray::HitRecord planeHit = intersectTriangle(ray, triangles[tID]); 
+        if (planeHit.t >= tmin && planeHit.t <= tmax && planeHit.t < hit.t)
+            hit = planeHit; 
     }
     return hit; 
 }
