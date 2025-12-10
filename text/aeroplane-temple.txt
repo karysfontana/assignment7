@@ -1,0 +1,274 @@
+#all the instances
+instance box models/box-outside.obj
+instance sphere models/sphere.obj 
+instance cylinder models/cylinder.obj 
+instance cone models/cone.obj 
+instance aeroplane models/aeroplane-scaled.obj
+
+#materials 
+material box-material 
+emission 0 0 0 
+ambient 0.3 0.25 0.2
+diffuse 0.9 0.85 0.7 
+specular 0.8 0.8 0.8 
+shininess 100
+absorbtion 0.8 
+reflection 0.2
+end-material 
+
+material sphere-material
+emission 0 0 0
+ambient 0.4 0.4 0.4
+diffuse 0.6 0.6 0.6
+specular 0.6 0.6 0.6 
+shininess 80 
+absorbtion 0.7 
+reflection 0.3 
+end-material 
+
+material cylinder-material 
+emission 0 0 0 
+ambient 0.35 0.3 0.2
+diffuse 0.85 0.75 0.55 
+specular 0.5 0.5 0.5 
+shininess 60 
+absorbtion 0.7 
+reflection 0.2 
+end-material 
+
+material cone-material 
+emission 0 0 0
+ambient 0.3 0.25 0.2
+diffuse 0.9 0.85 0.7 
+specular 0.5 0.5 0.5 
+shininess 50 
+absorbtion 0.1 
+reflection 0.0
+end-material 
+
+material aeroplane-material 
+emission 0 0 0 
+ambient 0.4 0.4 0.4
+diffuse 0.6 0.6 0.6
+specular 0.7 0.7 0.9 
+shininess 120 
+absorbtion 0.7 
+reflection 0.4 
+end-material 
+
+#lights 
+light main-light 
+ambient 0.8 0.8 0.8 
+diffuse 0.7 0.7 0.7 
+specular 0.7 0.7 0.7 
+position 5 55 10 
+spot-direction -0.27 -0.91 -0.22
+spot-angle 45 
+end-light 
+
+light secondary-light 
+ambient 0.6 0.6 0.6 
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5 
+position -5 45 10
+spot-direction 0.37 -0.95 -0.6
+spot-angle 60
+end-light 
+
+#textures
+image white textures/white.ppm 
+image checkerboard textures/checkerboard.ppm
+
+#the root 
+group root root 
+assign-light main-light root 
+assign-light secondary-light root
+
+#ground box 
+translate ground-translate ground-translate 0 -30 0 
+scale ground-scale ground-scale 100 5 100 
+leaf ground-box ground-box instanceof box 
+assign-material ground-box box-material 
+assign-texture ground-box checkerboard
+
+add-child ground-box ground-scale 
+add-child ground-scale ground-translate
+add-child ground-translate root 
+
+#pedestal box 
+translate pedestal-translate pedestal-translate 0 -27 -15
+scale pedestal-scale pedestal-scale 20 5 20 
+leaf pedestal-box pedestal-box instanceof box 
+assign-material pedestal-box box-material 
+assign-texture pedestal-box white 
+
+add-child pedestal-box pedestal-scale 
+add-child pedestal-scale pedestal-translate
+add-child pedestal-translate root 
+
+#first sphere
+translate sphere1-translate sphere1-translate -5 -22 -8
+scale sphere1-scale sphere1-scale 2 2 2 
+leaf sphere1 sphere1 instanceof sphere 
+assign-material sphere1 sphere-material 
+assign-texture sphere1 white
+
+add-child sphere1 sphere1-scale
+add-child sphere1-scale sphere1-translate
+add-child sphere1-translate root
+
+#second sphere
+translate sphere2-translate sphere2-translate 5 -22 -8
+scale sphere2-scale sphere2-scale 2 2 2
+leaf sphere2 sphere2 instanceof sphere
+assign-material sphere2 sphere-material
+assign-texture sphere2 white
+
+add-child sphere2 sphere2-scale 
+add-child sphere2-scale sphere2-translate
+add-child sphere2-translate root  
+
+#third sphere 
+translate sphere3-translate sphere3-translate -5 -22 -20 
+scale sphere3-scale sphere3-scale 2 2 2 
+leaf sphere3 sphere3 instanceof sphere
+assign-material sphere3 sphere-material 
+assign-texture sphere3 white
+
+add-child sphere3 sphere3-scale
+add-child sphere3-scale sphere3-translate
+add-child sphere3-translate root 
+
+#fourth sphere 
+translate sphere4-translate sphere4-translate 5 -22 -20
+scale sphere4-scale sphere4-scale 2 2 2
+leaf sphere4 sphere4 instanceof sphere
+assign-material sphere4 sphere-material
+assign-texture sphere4 white
+
+add-child sphere4 sphere4-scale 
+add-child sphere4-scale sphere4-translate
+add-child sphere4-translate root  
+
+#cylinder base 
+translate cylinderbase-translate cylinderbase-translate 0 -20 -15
+scale cylinderbase-scale cylinderbase-scale 10 1 10
+leaf cylinderbase cylinderbase instanceof cylinder
+assign-material cylinderbase cylinder-material 
+assign-texture cylinderbase white 
+
+add-child cylinderbase cylinderbase-scale 
+add-child cylinderbase-scale cylinderbase-translate
+add-child cylinderbase-translate root 
+
+#aeroplane 
+translate aeroplane-translate aeroplane-translate 0 -10 -14
+scale aeroplane-scale aeroplane-scale 25 25 25
+leaf aeroplane aeroplane instanceof aeroplane 
+assign-material aeroplane aeroplane-material 
+assign-texture aeroplane white 
+
+add-child aeroplane aeroplane-scale 
+add-child aeroplane-scale aeroplane-translate
+add-child aeroplane-translate root 
+
+#box base of column 
+translate box1-translate box1-translate -44 -27 -44
+scale box1-scale box1-scale 12 6 12
+leaf box1 box1 instanceof box 
+assign-material box1 box-material 
+assign-texture box1 white 
+
+add-child box1 box1-scale 
+add-child box1-scale box1-translate
+add-child box1-translate root 
+
+#cylinder column 
+translate column1-translate column1-translate -44 -25 -44
+scale column1-scale column1-scale 5 60 5
+leaf column1 column1 instanceof cylinder
+assign-material column1 cylinder-material 
+assign-texture column1 white 
+
+add-child column1 column1-scale 
+add-child column1-scale column1-translate
+add-child column1-translate root 
+
+#box base of column2 
+translate box2-translate box2-translate 44 -27 -44
+scale box2-scale box2-scale 12 6 12
+leaf box2 box2 instanceof box 
+assign-material box2 box-material 
+assign-texture box2 white 
+
+add-child box2 box2-scale 
+add-child box2-scale box2-translate
+add-child box2-translate root 
+
+#cylinder column2
+translate column2-translate column2-translate 44 -25 -44 
+scale column2-scale column2-scale 5 60 5 
+leaf column2 column2 instanceof cylinder
+assign-material column2 cylinder-material 
+assign-texture column2 white 
+
+add-child column2 column2-scale 
+add-child column2-scale column2-translate
+add-child column2-translate root 
+
+#box base of column3 
+translate box3-translate box3-translate 44 -27 44
+scale box3-scale box3-scale 12 6 12
+leaf box3 box3 instanceof box 
+assign-material box3 box-material 
+assign-texture box3 white 
+
+add-child box3 box3-scale 
+add-child box3-scale box3-translate
+add-child box3-translate root 
+
+#cylinder column3
+translate column3-translate column3-translate 44 -25 44 
+scale column3-scale column3-scale 5 60 5 
+leaf column3 column3 instanceof cylinder
+assign-material column3 cylinder-material 
+assign-texture column3 white 
+
+add-child column3 column3-scale 
+add-child column3-scale column3-translate
+add-child column3-translate root 
+
+#box base of column4 
+translate box4-translate box4-translate -44 -27 44
+scale box4-scale box4-scale 12 6 12
+leaf box4 box4 instanceof box 
+assign-material box4 box-material 
+assign-texture box4 white 
+
+add-child box4 box4-scale 
+add-child box4-scale box4-translate
+add-child box4-translate root 
+
+#cylinder column4
+translate column4-translate column4-translate -44 -25 44 
+scale column4-scale column4-scale 5 60 5 
+leaf column4 column4 instanceof cylinder
+assign-material column4 cylinder-material 
+assign-texture column4 white 
+
+add-child column4 column4-scale 
+add-child column4-scale column4-translate
+add-child column4-translate root 
+
+#roof cone 
+translate roof1-translate roof1-translate 0 35 0 
+scale roof1-scale roof1-scale 70 34 70
+leaf roof1 roof1 instanceof cone 
+assign-material roof1 cone-material 
+assign-texture roof1 white
+
+add-child roof1 roof1-scale 
+add-child roof1-scale roof1-translate 
+add-child roof1-translate root
+
+assign-root root 

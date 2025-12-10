@@ -19,7 +19,7 @@ on the assignment page.
 - Shadows were already complete and were a combined effort.
 
 **Extra Credit**
-Scene: For the extra credit scene I wanted to use the neptune model that's in ObjViewer. So, I planned the entire scene around the single neptune model (I was absolutely deadset on using it as the complex model) 
+Scene: For the extra credit scene I wanted to use the neptune model that's in ObjViewer. So, I planned the entire scene around the single neptune model (I was absolutely deadset on using it as the complex model). However, the neptune object doesn't work well with the neptune model, so I made a temple dedicated to aeroplanes. 
 - I physically drew out a mausoleum/temple to house the neptune object as a statue to start. I prefer to do this because it gives me a base for how everything should look together (it's great for visualization and confirmed that my ideal scene was over the required 15 objects). 
 - After, I started to define materials, I wanted to use beiege and grey tones for the temple itself, but keep neptune as a stand-out figure with its color. This took a couple of tries to get the look I was hoping for. 
 - I then started with defining a base for the temple, then a pedestal for the neptune statue. 
@@ -29,7 +29,7 @@ Scene: For the extra credit scene I wanted to use the neptune model that's in Ob
 - Finally, for the roof of the temple, I used a very stretched out cone. I had initially planned to use a box base for the roof and then a cone on top, but that ended up looking ugly, so I used only the cone instead. I didn't use the box alone because it wouldn't look like a Roman temple without a tapered roof. 
 - This scene ended up being made up of 18 objects in total: 6 box objects, 5 cylinder objects, 4 sphere objects, 1 cone object, and 1 neptune object. 
 - I avoided giving the model a back object because it would ruin the temple look of the model. 
-- I had the point lights pointed at neptunes statue, which took some editing due to the cone roof, however, I think they look good and create a good shadow of neptune. 
+- The KD tree doesn't seem to be able to handle the neptune object. So, ultimately, the statue of neptune was replaced with the plane object. This does ruin my initial scene concept, however, now the temple is more of a worship of planes than neptune. 
 
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
