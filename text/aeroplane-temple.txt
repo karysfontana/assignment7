@@ -66,7 +66,7 @@ light main-light
 ambient 0.8 0.8 0.8 
 diffuse 0.7 0.7 0.7 
 specular 0.7 0.7 0.7 
-position 5 55 10 
+position 5 85 10 
 spot-direction -0.27 -0.91 -0.22
 spot-angle 45 
 end-light 
