@@ -19,6 +19,9 @@ on the assignment page.
 - Shadows were already complete and were a combined effort.
 
 **Extra Credit**
+Refraction: The refraction uses Snell's law as recommended along with taking in transparency and the refraction-index. This can be
+seen in the raytracerRefraction.png in the images.
+
 Scene: For the extra credit scene I wanted to use the neptune model that's in ObjViewer. So, I planned the entire scene around the single neptune model (I was absolutely deadset on using it as the complex model). However, the neptune object doesn't work well with the neptune model, so I made a temple dedicated to aeroplanes. 
 - I physically drew out a mausoleum/temple to house the neptune object as a statue to start. I prefer to do this because it gives me a base for how everything should look together (it's great for visualization and confirmed that my ideal scene was over the required 15 objects). 
 - After, I started to define materials, I wanted to use beiege and grey tones for the temple itself, but keep neptune as a stand-out figure with its color. This took a couple of tries to get the look I was hoping for. 
