@@ -36,6 +36,8 @@ Scene: For the extra credit scene I wanted to use the neptune model that's in Ob
 - This scene ended up being made up of 18 objects in total: 6 box objects, 5 cylinder objects, 4 sphere objects, 1 cone object, and 1 neptune object. 
 - I avoided giving the model a back object because it would ruin the temple look of the model. 
 - The KD tree doesn't seem to be able to handle the neptune object. So, ultimately, the statue of neptune was replaced with the plane object. This does ruin my initial scene concept, however, now the temple is more of a worship of planes than neptune. 
+- The output of the raytracer and the scene itself can be seen in the PNG's that start with creatie in the images/assignment8
+folder.
 
 **Citations**
 White.ppm - I opened MSPaint and just downloaded the png then converted to ppm.
