@@ -19,6 +19,8 @@ on the assignment page.
 - Shadows were already complete and were a combined effort.
 
 **Extra Credit**
+Texture Mapping: We have the math for texture mapping inside of Hit Record and the RaytraceMesh. These were not fully showcased in the KD Tree and we have no png's to showcase it.
+
 Refraction: The refraction uses Snell's law as recommended along with taking in transparency and the refraction-index. This can be
 seen in the raytracerRefraction.png in the images.
 
