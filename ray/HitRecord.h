@@ -13,7 +13,11 @@ public:
     glm::vec3 point;                          
     glm::vec3 normal;                         
     util::Material material;                        
-    bool hit;                      
+    bool hit;  
+    
+    // For texture mapping :) 
+    float u; 
+    float v; 
     
     HitRecord() : t(numeric_limits<float>::max()), hit(false) {}
     

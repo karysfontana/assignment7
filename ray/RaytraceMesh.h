@@ -1,6 +1,7 @@
 #ifndef _RAYTRACEMESH_H_
 #define _RAYTRACEMESH_H_
 
+#include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -51,6 +52,79 @@ private:
         }
         return false; 
     }
+
+    /**
+     * @brief Helper method to get box UVs from hit point and interpolated normal. 
+                Uses the assumption that that the box is centered at (0, 0, 0) like in example picture. 
+     * 
+     * @param point 
+     * @param normal 
+     * @param outU 
+     * @param outV 
+     */
+    void computeBoxUV(const glm::vec3& point, const glm::vec3& normal, float& outU, float& outV)
+    {
+        // Convert to [0,1] range like in assignment example picture
+        float x = point.x + 0.5f; 
+        float y = point.y + 0.5f; 
+        float z = point.z + 0.5f; 
+
+        glm::vec3 absN = glm::abs(normal); 
+
+        // Determine which face was hit 
+        enum Face { LEFT, RIGHT, TOP, BOTTOM, FRONT, BACK}; 
+        Face face; 
+        if (absN.x > absN.y && absN.x > absN.z)
+            face = (normal.x > 0) ? RIGHT : LEFT; 
+        else if (absN.y > absN.z)
+            face = (normal.y > 0) ? TOP : BOTTOM; 
+        else 
+            face = (normal.z > 0) ? FRONT : BACK; 
+
+        // Like in img. each face is 0.25 wide and high 
+        const float boxw = 0.25f; 
+        const float boxh = 0.25f; 
+
+        switch (face)
+        {
+            case RIGHT:
+                // at [0.50,0.75] x [0.25,0.50]
+                outU = 0.50f + z * boxw; 
+                outV = 0.25f + y * boxh; 
+                break; 
+            
+            case LEFT: 
+                // at [0.00, 0.25] x [0.25,0.50]
+                outU = 0.00f + (1.0f - z) * boxw; 
+                outV = 0.25f + y * boxh; 
+                break;  
+            
+            case FRONT: 
+                // at [0.75,1.00] x [0.25,0.50]
+                outU = 0.75f + (1.0f - x) * boxw; 
+                outV = 0.25f + y * boxh; 
+                break; 
+            
+            case BACK: 
+                // at [0.25,0.50] x [0.25,0.50]
+                outU = 0.25f + x * boxw; 
+                outV = 0.25f + y * boxh; 
+                break; 
+            
+            case TOP: 
+                // at [0.25,0.50] x [0.50,0.75]
+                outU = 0.25f + x * boxw; 
+                outV = 0.50f + z * boxh; 
+                break; 
+            
+            case BOTTOM: 
+                // at [0.25,0.50] x [0.00,0.25]
+                outU = 0.25f + x * boxw; 
+                outV = 0.00f + (1.0f - z) * boxh; 
+
+        }
+
+    }
     
 public:
         RaytraceMesh(const string& name, const util::PolygonMesh<VertexAttrib>& mesh)
@@ -81,12 +155,40 @@ public:
                         float tv = glm::length(pv - rayView.origin);
                         if (tv < closestHit.t) {
                             float w = 1.0f - u - v;
+
+                            // for normal interpolation (not edited from before andres dw)
                             glm::vec3 n1 = vertices[prim1].getNormal();
                             glm::vec3 n2 = vertices[prim2].getNormal();
                             glm::vec3 n3 = vertices[prim3].getNormal();
                             glm::vec3 normal = w * n1 + u * n2 + v * n3;
                             glm::vec3 nv = glm::normalize(glm::vec3(normalMatrix * glm::vec4(normal, 0.0f)));
                             closestHit.setHit(tv, pv, nv, material);
+
+                            glm::vec3 geometricNormal = glm::normalize(glm::cross(v2 - v1, v3 - v1));
+                            // UV interpolation 
+                            if (name == "box" || name == "box-outside")
+                            {
+                                float U, V; 
+                                computeBoxUV(point, geometricNormal, U, V); 
+                                // store UVs in hit record 
+                                closestHit.u = U; 
+                                closestHit.v = V; 
+                            }
+                            else if (name == "sphere")
+                            {
+                                glm::vec3 n = normalize(point); 
+                                float theta = atan2(n.z, n.x); 
+                                float phi = asin(n.y); 
+                                // Store UVs
+                                closestHit.u = 0.5f + theta / (2.0f * M_PI); 
+                                closestHit.v = 0.5f - phi / M_PI; 
+                            }
+                            else 
+                            {
+                                closestHit.u = 0.0f; 
+                                closestHit.v = 0.0f; 
+                            }
+
                         }
                     }
                 }
