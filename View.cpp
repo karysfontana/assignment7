@@ -18,7 +18,7 @@ using namespace std;
 // active2, active3, active4 determines what camera mode you are currently in
 // first to manage when the text scengraph renderer prints.
 // tick is used for animation and active3 camera mode to determine the rate of movement.
-glm::vec3 stationaryLook = glm::vec3(0.0f, 15.0f, 150.0f);
+glm::vec3 stationaryLook = glm::vec3(0.0f, 20.0f, 40.0f);
 glm::vec3 stationaryTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 look = stationaryLook;
 glm::vec3 target = stationaryTarget;
@@ -205,7 +205,7 @@ void View::init(map<string,util::PolygonMesh<VertexAttrib>>& meshes, sgraph::ISc
 	projection = glm::perspective(glm::radians(60.0f),(float)window_width/window_height,0.1f,10000.0f);
     glViewport(0, 0, window_width,window_height);
     renderer = new sgraph::GLScenegraphRenderer(modelview,objects,shaderLocations);    
-    raytracer = new ray::Raytracer(200, 200, modelview, meshes, scenegraph);
+    raytracer = new ray::Raytracer(800, 800, modelview, meshes, scenegraph);
 }
 
 void View::display(sgraph::IScenegraph *scenegraph) {

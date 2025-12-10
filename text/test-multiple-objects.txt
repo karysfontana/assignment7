@@ -9,9 +9,9 @@ ambient 0.3 0.3 0.3
 diffuse 0.8 0.8 0.8
 specular 0.8 0.8 0.8
 shininess 100
-absorbtion 0.6
+absorbtion 0.7
 reflection 0.2
-transparency 0.2
+transparency 0.1
 refraction-index 1.2
 end-material
 
@@ -21,10 +21,10 @@ ambient 0 0.3 0.3
 diffuse 0 0.8 0.8
 specular 0 0.8 0.8
 shininess 100
-absorbtion 0.6
-reflection 0.2
-transparency 0.2
-refraction-index 1.2
+absorbtion 1.0
+reflection 0.0
+# transparency 0.2
+# refraction-index 1.2
 end-material
 
 material sphere-material
@@ -33,10 +33,10 @@ ambient 0.3 0.3 0
 diffuse 0.8 0.8 0
 specular 0.8 0.8 0
 shininess 50
-absorbtion 0.6
+absorbtion 0.7
 reflection 0.2
-transparency 0.2
-refraction-index 1.2
+transparency 0.4
+refraction-index 1.5
 end-material
 
 #lights

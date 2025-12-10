@@ -7,7 +7,6 @@
 #include "HitRecord.h"
 #include "Ray.h"
 #include "../sgraph/RaycastRenderer.h"
-#include "../sgraph/OldRaycastRenderer.h"
 #include "../sgraph/IScenegraph.h"
 #include <stack>
 #include <iostream>
@@ -73,7 +72,6 @@ class Raytracer {
         glm::vec3 color = glm::vec3(0.0f);
         for (const auto& light : lights) {
             if (inShadow(hit.point, normal, light)) {
-                color += matAmbient * glm::vec3(light->getAmbient());
                 continue; 
             }
             glm::vec4 lightPos = light->getPosition();
@@ -107,13 +105,13 @@ class Raytracer {
     }
 
     //computes refraction direction using Snell's law.
-    bool computeRefraction(const glm::vec3& incident, const glm::vec3& normal, 
+    bool computeRefraction(const glm::vec3& ray, const glm::vec3& normal, 
                            float n1, float n2, glm::vec3& refracted) {
         float eta = n1 / n2;
-        float cosI = -glm::dot(incident, normal);
-        float sin2T = eta * eta * (1.0f - cosI * cosI);
-        if (sin2T > 1.0f) return false;
-        refracted = glm::normalize(eta * incident + (eta * cosI - sqrt(1.0f - sin2T)) * normal);
+        float cos = -glm::dot(ray, normal);
+        float sin = eta * eta * (1.0f - cos * cos);
+        if (sin > 1.0f) return false;
+        refracted = glm::normalize(eta * ray + (eta * cos - sqrt(1.0f - sin)) * normal);
         return true;
     }
 

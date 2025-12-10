@@ -7,4 +7,3 @@ KDTree.o
 Model.o
 View.o
 raytracer.ppm
-OldRaycastRenderer.h
