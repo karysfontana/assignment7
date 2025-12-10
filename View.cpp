@@ -266,6 +266,9 @@ bool View::shouldWindowClose() {
 }
 
 void View::reshape(int width, int height) {
+    if (width <= 0 || height <= 0) {
+        return;
+    }
     glViewport(0, 0, width, height);
     projection = glm::perspective(
         glm::radians(60.0f),

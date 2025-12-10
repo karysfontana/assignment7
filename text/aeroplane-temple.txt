@@ -80,6 +80,28 @@ spot-direction 0.37 -0.95 -0.6
 spot-angle 60
 end-light 
 
+light third-light 
+ambient 0.6 0.6 0.6 
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5 
+position 20 20 20
+end-light 
+
+light fourth-light 
+ambient 0.6 0.6 0.6 
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5 
+position -20 -20 -20
+end-light 
+
+light fifth-light 
+ambient 0.6 0.6 0.6 
+diffuse 0.5 0.5 0.5
+specular 0.5 0.5 0.5 
+position 40 0 -40
+end-light 
+
+
 #textures
 image white textures/white.ppm 
 image checkerboard textures/checkerboard.ppm
@@ -88,6 +110,9 @@ image checkerboard textures/checkerboard.ppm
 group root root 
 assign-light main-light root 
 assign-light secondary-light root
+assign-light third-light root
+assign-light fourth-light root
+assign-light fifth-light root
 
 #ground box 
 translate ground-translate ground-translate 0 -30 0 
